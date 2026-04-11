@@ -13,6 +13,7 @@ class StudentList extends Component
     public string $grade = '';
     public bool $showForm = false;
     public string $error = '';
+    public string $passage = '';
 
     public function mount(int $classId)
     {
@@ -57,6 +58,29 @@ class StudentList extends Component
         $api = app(ApiService::class);
         $token = session('api_token');
         $api->withToken($token)->delete("api/classes/{$this->classId}/students/{$studentId}");
+        $this->loadStudents();
+    }
+
+    public function assignReading(int $studentId, string $passageText)
+    {
+        $this->validate([
+            'passageText' => 'required|string|max:5000',
+        ], [
+            'passageText.required' => 'Passage text is required.',
+            'passageText.max' => 'Passage too long.',
+        ]);
+
+        $api = app(ApiService::class);
+        $token = session('api_token');
+        $response = $api->withToken($token)->post("api/students/{$studentId}/sessions", [
+            'passage' => $passageText,
+        ]);
+
+        if (isset($response['id'])) {
+            return $this->redirect(route('reader', [$studentId, $response['id']]));
+        }
+
+        $this->error = $response['message'] ?? 'Failed to create reading session.';
         $this->loadStudents();
     }
 

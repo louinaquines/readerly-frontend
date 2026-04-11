@@ -59,6 +59,17 @@
                     <td class="px-6 py-4 text-sm text-gray-500">{{ $student['grade'] }}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">Level {{ $student['reading_level'] }}</td>
                     <td class="px-6 py-4 text-sm">
+<button onclick="assignReading({{ $student['id'] }})" class="text-blue-600 hover:text-blue-800 mr-3">
+                            📖 Assign Reading
+                        </button>
+                        <script>
+                            function assignReading(studentId) {
+                                const passage = prompt('Enter the reading passage text:');
+                                if (passage && passage.trim()) {
+                                    @this.assignReading(studentId, passage.trim());
+                                }
+                            }
+                        </script>
                         <button wire:click="deleteStudent({{ $student['id'] }})"
                                 wire:confirm="Remove {{ $student['name'] }}?"
                                 class="text-red-600 hover:text-red-800">
