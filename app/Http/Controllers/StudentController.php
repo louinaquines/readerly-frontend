@@ -38,6 +38,7 @@ class StudentController extends Controller
 
         $user['reading_level'] = $student['reading_level'] ?? 1;
 
+        $student = $this->api()->get("/api/students/{$user['id']}")->json() ?? [];
         return view('student.dashboard', compact('stories', 'sessions', 'user', 'student'));
     }
     public function profile()
