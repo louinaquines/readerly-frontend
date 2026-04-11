@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -36,9 +37,7 @@ class StudentController extends Controller
         $sessions = is_array($sessions) && isset($sessions[0]) ? $sessions : [];
         $stories  = is_array($stories) && isset($stories[0]) ? $stories : [];
 
-        $user['reading_level'] = $student['reading_level'] ?? 1;
-
-        $student = $this->api()->get("/api/students/{$user['id']}")->json() ?? [];
+$user['reading_level'] = $student['reading_level'] ?? 1;
         return view('student.dashboard', compact('stories', 'sessions', 'user', 'student'));
     }
     public function profile()

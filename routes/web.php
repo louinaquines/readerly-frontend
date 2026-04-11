@@ -7,7 +7,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentReaderController;
 
 // Auth
-Route::get('/', fn() => redirect()->route('login'));
+// Route::get('/', fn() => redirect()->route('login')); // Removed duplicate
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
