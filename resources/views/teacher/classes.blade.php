@@ -214,7 +214,12 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   @include('teacher.partials.sidebar')
   <div class="sidebar-footer">
     <div class="sidebar-user">
-      <div class="sidebar-avatar">{{ strtoupper(substr(session('user')['name'] ?? 'T', 0, 2)) }}</div>
+      <div class="sidebar-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:rgba(255,255,255,.6);">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
       <div>
         <div class="sidebar-user-name">{{ session('user')['name'] ?? 'Teacher' }}</div>
         <div class="sidebar-user-role">Teacher</div>

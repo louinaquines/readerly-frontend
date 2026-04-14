@@ -21,14 +21,16 @@
     </nav>
     <div style="padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.1)">
         <a href="{{ route('teacher.profile') }}" style="display:flex;align-items:center;gap:.75rem;padding:.75rem;background:rgba(255,255,255,.08);border-radius:12px;margin-bottom:.75rem;text-decoration:none;color:inherit;transition:background .2s">
-<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff;flex-shrink:0;background:var(--white)">
-                @if(session('user.avatar') ?? false)
-                  <img src="{{ Storage::url(session('user.avatar')) }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                @else
-                  <svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.5rem; height: 1.5rem; color: rgba(255,255,255,0.6);">
-                    <path d="M12 12.713l-1.333-1.333-2.667 2.667V16h8v-2.253l-2.667-2.667zM12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
-                  </svg>
-                @endif
+@php $sidebarAvatar = session('user')['avatar'] ?? ''; @endphp
+            <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;background:transparent;border:2px solid white;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;">
+                  @if(!empty($sidebarAvatar))
+                      <img src="{{ asset('storage/'.$sidebarAvatar) }}" style="width:100%;height:100%;object-fit:cover;">
+                  @else
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:rgba(255,255,255,.6);">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                      </svg>
+                  @endif
             </div>
             <div style="min-width:0">
                 <div style="font-size:.82rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ session('user')['name'] ?? 'Teacher' }}</div>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class TeacherController extends Controller
@@ -300,6 +300,12 @@ class TeacherController extends Controller
         // Update session immediately for instant UI refresh
         $user['avatar'] = $path;
         session(['user' => $user]);
+
+        // Sync Auth user if logged in via session auth
+        $authUser = Auth::user();
+        if ($authUser) {
+            $authUser->avatar = $path;
+        }
 
         // TODO: API Sync - Add when JWT backend supports photo upload
         // $this->api()->post('/api/profile/photo', ['avatar' => $path]);

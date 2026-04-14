@@ -75,9 +75,9 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 .sidebar-user{display:flex;align-items:center;gap:.7rem;margin-bottom:.75rem}
 .sidebar-avatar{
   width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.2);
+  background:transparent;border:2px solid white;
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0
+  font-family:var(--font-display);font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;aspect-ratio:1/1
 }
 .sidebar-user-name{font-size:.82rem;font-weight:600;color:#fff;line-height:1.2}
 .sidebar-user-role{font-size:.68rem;color:rgba(255,255,255,.45)}
@@ -298,13 +298,10 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   <div class="sidebar-footer">
     <div class="sidebar-user">
 <div class="sidebar-avatar">
-        @if($user['avatar'] ?? false)
-          <img src="{{ Storage::url($user['avatar']) }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-        @else
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 1.5rem; height: 1.5rem; color: rgba(255,255,255,0.6);">
-            <path d="M12 12.713l-1.333-1.333-2.667 2.667V16h8v-2.253l-2.667-2.667zM12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:rgba(255,255,255,.6);">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
           </svg>
-        @endif
       </div>
       <div>
         <div class="sidebar-user-name">{{ $user['name'] }}</div>

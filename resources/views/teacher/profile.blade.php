@@ -33,7 +33,7 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
 .sidebar-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.08)}
 .sidebar-user{display:flex;align-items:center;gap:.75rem;padding:.75rem;background:rgba(255,255,255,.07);border-radius:12px;margin-bottom:.65rem;cursor:pointer;text-decoration:none;transition:background .2s}
 .sidebar-user:hover{background:rgba(255,255,255,.12)}
-.user-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.82rem;font-weight:800;color:#fff;flex-shrink:0;background:rgba(255,255,255,.15);overflow:hidden}
+.user-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.82rem;font-weight:800;color:#fff;flex-shrink:0;background:transparent;border:2px solid white;overflow:hidden;aspect-ratio:1/1}
 .user-info .name{font-size:.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
 .user-info .role{font-size:.68rem;color:rgba(255,255,255,.45)}
 .signout-btn{width:100%;padding:.6rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
@@ -64,7 +64,7 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
 .profile-hero{background:linear-gradient(135deg,var(--blue-dark),var(--blue));border-radius:20px;padding:clamp(1.25rem,3vw,2rem);margin-bottom:2rem;display:flex;align-items:center;gap:clamp(1rem,3vw,2rem);position:relative;overflow:hidden;flex-wrap:wrap}
 .profile-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
 .avatar-picker-wrap{position:relative;z-index:1;flex-shrink:0}
-.profile-avatar-large{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:2.4rem;cursor:pointer;transition:transform .2s;background:rgba(255,255,255,.1);overflow:hidden}
+.profile-avatar-large{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:2.4rem;cursor:pointer;transition:transform .2s;background:transparent;overflow:hidden;aspect-ratio:1/1}
 .profile-avatar-large:hover{transform:scale(1.05)}
 .avatar-change-hint{font-size:.65rem;color:rgba(255,255,255,.55);text-align:center;margin-top:.35rem}
 .profile-hero-info{flex:1;position:relative;z-index:1;min-width:180px}
@@ -152,14 +152,16 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
   </nav>
   <div class="sidebar-footer">
     <a href="{{ route('teacher.profile') }}" class="sidebar-user">
-      <div class="user-avatar">
-        @if(session('user')['avatar'] ?? false)
-          <img src="{{ Storage::url(session('user')['avatar']) }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover">
-        @else
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width:1.5rem;height:1.5rem;color:rgba(255,255,255,.6)">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-          </svg>
-        @endif
+      <div class="user-avatar" style="background:transparent;border:2px solid white;display:flex;align-items:center;justify-content:center;overflow:hidden;aspect-ratio:1/1;">
+          @php $sidebarAvatar = session('user')['avatar'] ?? null @endphp
+          @if(!empty($sidebarAvatar))
+              <img src="{{ asset('storage/' . $sidebarAvatar) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          @else
+              <svg viewBox="0 0 24 24" ...>
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+              </svg>
+          @endif
       </div>
       <div class="user-info">
         <div class="name">{{ session('user')['name'] ?? 'Teacher' }}</div>
@@ -203,14 +205,15 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
       <div class="avatar-picker-wrap">
         <input type="file" id="profile_photo" name="profile_photo" accept="image/*" style="display:none">
         <form id="photoUploadForm" enctype="multipart/form-data" style="display:contents">@csrf</form>
-        <div class="profile-avatar-large" id="heroAvatar">
-          @if(session('user')['avatar'] ?? false)
-            <img src="{{ Storage::url(session('user')['avatar']) }}" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
-          @else
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:3rem;height:3rem;color:rgba(255,255,255,.6)">
-              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-            </svg>
-          @endif
+        <div class="profile-avatar-large" id="heroAvatar" style="background:transparent;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;overflow:hidden;aspect-ratio:1/1;">
+            @if(!empty($user['avatar']))
+                <img src="{{ asset('storage/' . $user['avatar']) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
+            @else
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:rgba(255,255,255,.6);">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>
+            @endif
         </div>
         <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.5);color:#fff;padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none" id="uploadHint">📸 Upload</div>
         <div class="avatar-change-hint">Click to change</div>
@@ -352,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-      heroAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      heroAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;aspect-ratio:1/1;display:block;">`;
       const formData = new FormData(document.getElementById('photoUploadForm'));
       formData.append('profile_photo', file);
       fetch('{{ route("teacher.profile.photo") }}', {
@@ -363,8 +366,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          heroAvatar.innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-          document.querySelector('.user-avatar').innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+          heroAvatar.innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;aspect-ratio:1/1;display:block;">`;
+          document.querySelector('.user-avatar').innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;aspect-ratio:1/1;display:block;">`;
           Swal.fire({ icon:'success', title:'Photo Updated!', timer:2000, showConfirmButton:false });
         } else { throw new Error(data.error || 'Upload failed'); }
       })

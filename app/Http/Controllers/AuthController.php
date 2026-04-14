@@ -80,6 +80,16 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $user = session('user');
+
+        // Delete profile photo if exists
+        if (isset($user['avatar']) && $user['avatar']) {
+            $filePath = storage_path('app/public/' . $user['avatar']);
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
         \Illuminate\Support\Facades\Http::withToken(session('api_token'))
             ->post(config('services.api.base_url') . '/api/auth/logout');
 
