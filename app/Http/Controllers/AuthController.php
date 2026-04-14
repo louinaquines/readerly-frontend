@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ApiService;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -27,6 +28,12 @@ class AuthController extends Controller
 
         $user = $response['user'] ?? ['email' => $request->email];
         $role = $user['role'] ?? 'student';
+
+        // Sync avatar from database if exists
+        $dbUser = User::where('email', $request->email)->first();
+        if ($dbUser && $dbUser->avatar) {
+            $user['avatar'] = $dbUser->avatar;
+        }
 
         session([
             'api_token' => $response['access_token'],

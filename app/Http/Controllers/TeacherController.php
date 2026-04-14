@@ -301,10 +301,11 @@ class TeacherController extends Controller
         $user['avatar'] = $path;
         session(['user' => $user]);
 
-        // Sync Auth user if logged in via session auth
+        // Save avatar to database
         $authUser = Auth::user();
         if ($authUser) {
             $authUser->avatar = $path;
+            $authUser->save();
         }
 
         // TODO: API Sync - Add when JWT backend supports photo upload

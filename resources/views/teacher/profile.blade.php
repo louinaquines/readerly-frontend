@@ -206,8 +206,9 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
         <input type="file" id="profile_photo" name="profile_photo" accept="image/*" style="display:none">
         <form id="photoUploadForm" enctype="multipart/form-data" style="display:contents">@csrf</form>
         <div class="profile-avatar-large" id="heroAvatar" style="background:transparent;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;overflow:hidden;aspect-ratio:1/1;">
-            @if(!empty($user['avatar']))
-                <img src="{{ asset('storage/' . $user['avatar']) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
+            @php $heroAvatar = session('user')['avatar'] ?? '' @endphp
+            @if(!empty($heroAvatar))
+                <img src="{{ asset('storage/' . $heroAvatar) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
             @else
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:rgba(255,255,255,.6);">
                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
