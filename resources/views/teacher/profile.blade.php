@@ -11,60 +11,29 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --blue:#1E40AF;--blue-dark:#1E3A5F;--blue-light:#EFF6FF;--blue-mid:#3B82F6;
-  --orange:#F97316;--yellow:#F59E0B;--yellow-light:#FEF3C7;--yellow-dark:#92400E;
+  --yellow:#F59E0B;--yellow-light:#FEF3C7;--yellow-dark:#92400E;
   --green:#059669;--green-light:#ECFDF5;
   --red:#DC2626;--red-light:#FEF2F2;
   --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;
-  --gray-500:#6B7280;--gray-700:#374151;--gray-900:#111827;--white:#fff;
+  --gray-500:#6B7280;--gray-700:#374151;--gray-900:#111827;
   --font-display:'Baloo 2',cursive;--font-body:'DM Sans',sans-serif;
   --sidebar-w:240px;--topbar-h:64px;
 }
 body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;color:var(--gray-900)}
 
-/* ── SIDEBAR ── */
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--blue-dark);display:flex;flex-direction:column;z-index:200;transition:transform .3s}
-.sidebar-logo{padding:0 1.4rem;height:var(--topbar-h);display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:#fff;text-decoration:none}
-.sidebar-logo span{color:var(--yellow)}
-.sidebar-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
-.nav-section{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:1.2px;padding:.5rem .75rem;margin-bottom:.2rem;margin-top:.6rem}
-.nav-link{display:flex;align-items:center;gap:.7rem;padding:.65rem .75rem;border-radius:10px;color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s;margin-bottom:.15rem}
-.nav-link:hover{background:rgba(255,255,255,.1);color:#fff}
-.nav-link.active{background:rgba(255,255,255,.12);color:#fff}
-.sidebar-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.08)}
-.sidebar-user{display:flex;align-items:center;gap:.75rem;padding:.75rem;background:rgba(255,255,255,.07);border-radius:12px;margin-bottom:.65rem;cursor:pointer;text-decoration:none;transition:background .2s}
-.sidebar-user:hover{background:rgba(255,255,255,.12)}
-.user-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.82rem;font-weight:800;color:#fff;flex-shrink:0;background:transparent;border:2px solid white;overflow:hidden;aspect-ratio:1/1}
-.user-info .name{font-size:.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
-.user-info .role{font-size:.68rem;color:rgba(255,255,255,.45)}
-.signout-btn{width:100%;padding:.6rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
-.signout-btn:hover{background:rgba(255,255,255,.14);color:#fff}
-
-/* Sidebar overlay (mobile) */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
-.sidebar-overlay.open{display:block}
-
-/* ── MAIN ── */
 .main{margin-left:var(--sidebar-w);min-height:100vh}
 
-/* ── TOPBAR ── */
 .topbar{height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.25rem,3vw,2rem);position:sticky;top:0;z-index:100;gap:1rem}
 .topbar-left{display:flex;align-items:center;gap:.75rem}
-.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:.35rem;border:none;background:transparent}
-.hamburger span{display:block;width:20px;height:2px;background:var(--gray-700);border-radius:2px;transition:all .25s}
 .topbar-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--gray-900)}
 .topbar-time{font-size:.8rem;color:var(--gray-500)}
 
-/* ── PAGE ── */
 .page{padding:clamp(1.25rem,3vw,2rem)}
-.page-header{margin-bottom:2rem}
-.page-header h1{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--gray-900)}
-.page-header p{font-size:.88rem;color:var(--gray-500);margin-top:.25rem}
 
-/* PROFILE HERO */
 .profile-hero{background:linear-gradient(135deg,var(--blue-dark),var(--blue));border-radius:20px;padding:clamp(1.25rem,3vw,2rem);margin-bottom:2rem;display:flex;align-items:center;gap:clamp(1rem,3vw,2rem);position:relative;overflow:hidden;flex-wrap:wrap}
 .profile-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
 .avatar-picker-wrap{position:relative;z-index:1;flex-shrink:0}
-.profile-avatar-large{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:2.4rem;cursor:pointer;transition:transform .2s;background:transparent;overflow:hidden;aspect-ratio:1/1}
+.profile-avatar-large{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;background:transparent;overflow:hidden;aspect-ratio:1/1}
 .profile-avatar-large:hover{transform:scale(1.05)}
 .avatar-change-hint{font-size:.65rem;color:rgba(255,255,255,.55);text-align:center;margin-top:.35rem}
 .profile-hero-info{flex:1;position:relative;z-index:1;min-width:180px}
@@ -75,14 +44,12 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
 .hero-stat .hs-num{font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:#fff;line-height:1}
 .hero-stat .hs-lbl{font-size:.65rem;color:rgba(255,255,255,.55);margin-top:.1rem}
 
-/* GRID */
 .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
 .card{background:#fff;border-radius:16px;border:1.5px solid var(--gray-200);padding:1.5rem;margin-bottom:1.5rem}
 .card:last-child{margin-bottom:0}
 .card-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
 .ct-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem}
 
-/* FORM */
 .form-group{margin-bottom:1rem}
 .form-group label{font-size:.75rem;font-weight:600;color:var(--gray-700);display:block;margin-bottom:.35rem}
 .form-group input{width:100%;padding:.7rem .95rem;border:1.5px solid var(--gray-200);border-radius:10px;font-family:var(--font-body);font-size:.88rem;color:var(--gray-900);outline:none;transition:border-color .2s}
@@ -94,105 +61,49 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
 .btn-danger{background:var(--red-light);color:var(--red);border:1.5px solid rgba(220,38,38,.2)}
 .btn-danger:hover{background:var(--red);color:#fff}
 
-/* CLASSES LIST */
 .class-item{display:flex;align-items:center;justify-content:space-between;padding:.75rem;background:var(--gray-50);border-radius:10px;margin-bottom:.5rem}
 .class-item-left .ci-name{font-size:.88rem;font-weight:600;color:var(--gray-900)}
 .class-item-left .ci-grade{font-size:.72rem;color:var(--gray-500);margin-top:.1rem}
 .ci-count{font-size:.75rem;font-weight:700;background:var(--blue-light);color:var(--blue);padding:.2rem .6rem;border-radius:50px}
 
-/* STATS */
 .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
 .mini-stat{background:var(--gray-50);border-radius:12px;padding:1rem;text-align:center}
 .mini-stat .ms-num{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--gray-900);line-height:1}
 .mini-stat .ms-lbl{font-size:.7rem;color:var(--gray-500);margin-top:.15rem}
 
-/* TAGS */
 .tag{display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:700;padding:.3rem .8rem;border-radius:50px}
 .tag-blue{background:var(--blue-light);color:var(--blue-dark)}
 .tag-green{background:var(--green-light);color:var(--green)}
 
-/* DIVIDER */
 .divider{height:1px;background:var(--gray-100);margin:1.2rem 0}
 
-/* ALERTS */
 .alert-success{background:var(--green-light);border:1.5px solid rgba(5,150,105,.2);color:var(--green);border-radius:10px;padding:.75rem 1rem;font-size:.83rem;margin-bottom:1rem}
 .alert-error{background:var(--red-light);border:1.5px solid rgba(220,38,38,.2);color:var(--red);border-radius:10px;padding:.75rem 1rem;font-size:.83rem;margin-bottom:1rem}
 
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .profile-grid{grid-template-columns:1fr}
-}
+@media(max-width:900px){ .profile-grid{grid-template-columns:1fr} }
 @media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
-  .hamburger{display:flex}
   .topbar-time{display:none}
 }
 @media(max-width:480px){
   .page{padding:1rem}
   .profile-hero{flex-direction:column;align-items:flex-start}
-  .profile-hero-stats{gap:1rem}
 }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <a href="{{ route('teacher.dashboard') }}" class="sidebar-logo">Reader<span>ly</span></a>
-  <nav class="sidebar-nav">
-    <div class="nav-section">MAIN</div>
-    <a href="{{ route('teacher.dashboard') }}" class="nav-link">🏠 Dashboard</a>
-    <div class="nav-section">CLASSES</div>
-    <a href="{{ route('teacher.classes') }}" class="nav-link">🏫 My Classes</a>
-    <div class="nav-section">REPORTS</div>
-    <a href="{{ route('teacher.reports') }}" class="nav-link">📄 PDF Reports</a>
-    <a href="{{ route('teacher.analytics') }}" class="nav-link">📊 Analytics</a>
-  </nav>
-  <div class="sidebar-footer">
-    <a href="{{ route('teacher.profile') }}" class="sidebar-user">
-      <div class="user-avatar" style="background:transparent;border:2px solid white;display:flex;align-items:center;justify-content:center;overflow:hidden;aspect-ratio:1/1;">
-          @php $sidebarAvatar = session('user')['avatar'] ?? null @endphp
-          @if(!empty($sidebarAvatar))
-              <img src="{{ asset('storage/' . $sidebarAvatar) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-          @else
-              <svg viewBox="0 0 24 24" ...>
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-              </svg>
-          @endif
-      </div>
-      <div class="user-info">
-        <div class="name">{{ session('user')['name'] ?? 'Teacher' }}</div>
-        <div class="role">Teacher</div>
-      </div>
-    </a>
-    <form method="POST" action="{{ route('logout') }}">
-      @csrf
-      <button class="signout-btn">Sign Out</button>
-    </form>
-  </div>
-</aside>
+@include('teacher.partials.sidebar')
 
-<!-- SIDEBAR OVERLAY -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <!-- HAMBURGER (shows on mobile) -->
-      <button class="hamburger" id="hamburger" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
       <div class="topbar-title">My Profile</div>
     </div>
     <div class="topbar-time" id="clock"></div>
   </div>
 
   <div class="page">
-
     @if(session('success'))
       <div class="alert-success">✓ {{ session('success') }}</div>
     @endif
@@ -200,21 +111,19 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
       <div class="alert-error">{{ $errors->first() }}</div>
     @endif
 
-    {{-- PROFILE HERO --}}
     <div class="profile-hero">
       <div class="avatar-picker-wrap">
         <input type="file" id="profile_photo" name="profile_photo" accept="image/*" style="display:none">
         <form id="photoUploadForm" enctype="multipart/form-data" style="display:contents">@csrf</form>
-        <div class="profile-avatar-large" id="heroAvatar" style="background:transparent;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;overflow:hidden;aspect-ratio:1/1;">
-            @php $heroAvatar = session('user')['avatar'] ?? '' @endphp
-            @if(!empty($heroAvatar))
-                <img src="{{ asset('storage/' . $heroAvatar) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
-            @else
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:rgba(255,255,255,.6);">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                </svg>
-            @endif
+        <div class="profile-avatar-large" id="heroAvatar">
+          @php $heroAvatar = session('user')['avatar'] ?? '' @endphp
+          @if(!empty($heroAvatar) && (str_contains($heroAvatar, 'storage') || str_contains($heroAvatar, 'avatars/')))
+            <img src="{{ asset('storage/' . $heroAvatar) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
+          @else
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:rgba(255,255,255,.6)">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          @endif
         </div>
         <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.5);color:#fff;padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none" id="uploadHint">📸 Upload</div>
         <div class="avatar-change-hint">Click to change</div>
@@ -232,7 +141,6 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
     </div>
 
     <div class="profile-grid">
-      {{-- LEFT COLUMN --}}
       <div>
         <div class="card">
           <div class="card-title"><div class="ct-icon" style="background:var(--blue-light)">👤</div> Account Details</div>
@@ -265,7 +173,6 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
         </div>
       </div>
 
-      {{-- RIGHT COLUMN --}}
       <div>
         <div class="card">
           <div class="card-title"><div class="ct-icon" style="background:var(--green-light)">🛡️</div> System Permissions</div>
@@ -299,7 +206,7 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
             <div class="class-item">
               <div class="class-item-left">
                 <div class="ci-name">{{ $class['name'] }}</div>
-                <div class="ci-grade">{{ $class['grade_level'] }}</div>
+                <div class="ci-grade">{{ $class['grade_level'] ?? '' }}</div>
               </div>
               <span class="ci-count">{{ count($class['students'] ?? []) }} students</span>
             </div>
@@ -310,30 +217,13 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
       </div>
     </div>
 
-    {{-- DELETE FORM --}}
     <form method="POST" action="{{ route('teacher.profile.delete') }}" id="deleteForm">
-      @csrf
-      @method('DELETE')
+      @csrf @method('DELETE')
     </form>
-
   </div>
 </div>
 
 <script>
-// ── Sidebar toggle (hamburger) ──
-const sidebar  = document.getElementById('sidebar');
-const overlay  = document.getElementById('sidebarOverlay');
-const hamburger = document.getElementById('hamburger');
-hamburger?.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('open');
-});
-overlay?.addEventListener('click', () => {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('open');
-});
-
-// ── Clock ──
 function updateClock() {
   const el = document.getElementById('clock');
   if (el) el.textContent = new Date().toLocaleTimeString('en-PH', {hour:'2-digit',minute:'2-digit'});
@@ -341,7 +231,6 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-// ── Photo upload ──
 document.addEventListener('DOMContentLoaded', function() {
   const heroAvatar = document.getElementById('heroAvatar');
   const fileInput  = document.getElementById('profile_photo');
@@ -356,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-      heroAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;aspect-ratio:1/1;display:block;">`;
+      heroAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
       const formData = new FormData(document.getElementById('photoUploadForm'));
       formData.append('profile_photo', file);
       fetch('{{ route("teacher.profile.photo") }}', {
@@ -367,8 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          heroAvatar.innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;aspect-ratio:1/1;display:block;">`;
-          document.querySelector('.user-avatar').innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;aspect-ratio:1/1;display:block;">`;
+          heroAvatar.innerHTML = `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
           Swal.fire({ icon:'success', title:'Photo Updated!', timer:2000, showConfirmButton:false });
         } else { throw new Error(data.error || 'Upload failed'); }
       })
@@ -378,15 +266,14 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// ── Delete account ──
 function confirmDelete() {
   Swal.fire({
     title:'Delete your account?',
     text:'This will permanently delete your account and all your data.',
-    icon:'error',showCancelButton:true,
-    confirmButtonColor:'#DC2626',cancelButtonColor:'#6B7280',
+    icon:'error', showCancelButton:true,
+    confirmButtonColor:'#DC2626', cancelButtonColor:'#6B7280',
     confirmButtonText:'Yes, delete it',
-    input:'password',inputPlaceholder:'Enter your password to confirm'
+    input:'password', inputPlaceholder:'Enter your password to confirm'
   }).then(r => { if(r.isConfirmed) document.getElementById('deleteForm').submit(); });
 }
 

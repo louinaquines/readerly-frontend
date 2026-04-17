@@ -205,8 +205,42 @@ class TeacherController extends Controller
 
     public function analytics()
     {
-        $classes  = $this->api()->get('/api/classes')->json();
-        return view('teacher.analytics', compact('classes'));
+        $classes = $this->api()->get('/api/classes')->json() ?? [];
+
+        // Build analytics-ready class and session data shape expected by the view.
+        $recentSessions = [];
+        $classes = array_map(function ($class) use (&$recentSessions) {
+            $students = array_map(function ($student) use (&$recentSessions) {
+                $sessions = $this->api()
+                    ->get("/api/students/{$student['id']}/sessions")
+                    ->json() ?? [];
+
+                $sessions = array_map(function ($session) use ($student) {
+                    $session['score'] = $session['score']
+                        ?? $session['accuracy_score']
+                        ?? null;
+                    $session['student_id'] = $student['id'];
+                    $session['student_name'] = $student['name'] ?? 'Student';
+                    return $session;
+                }, $sessions);
+
+                $withScores = array_values(array_filter($sessions, fn($s) => !is_null($s['score'] ?? null)));
+                usort($withScores, fn($a, $b) => strtotime($b['updated_at'] ?? 0) - strtotime($a['updated_at'] ?? 0));
+                $student['latest_score'] = $withScores[0]['score'] ?? null;
+
+                $recentSessions = array_merge($recentSessions, $sessions);
+                return $student;
+            }, $class['students'] ?? []);
+
+            $class['students'] = $students;
+            return $class;
+        }, $classes);
+
+        usort($recentSessions, fn($a, $b) =>
+            strtotime($b['updated_at'] ?? 0) - strtotime($a['updated_at'] ?? 0)
+        );
+
+        return view('teacher.analytics', compact('classes', 'recentSessions'));
     }
     public function profile()
     {

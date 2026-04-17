@@ -379,8 +379,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
             </div>
             <div class="read-btn-wrap">
               <div class="pulse-ring"></div>
-              {{-- FIX: use $user['id'] instead of $student['id'] --}}
-              <a href="{{ route('reader', [$user['id'], $session['id']]) }}" class="read-btn">
+              <a href="{{ route('reader', [$student['id'], $session['id']]) }}" class="read-btn">
                 🎤 Read Now
               </a>
             </div>

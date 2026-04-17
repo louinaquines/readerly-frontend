@@ -56,6 +56,7 @@ class AuthController extends Controller
             'email'                 => 'required|email',
             'password'              => 'required|min:6|confirmed',
             'role'                  => 'required|in:teacher,student',
+            'student_id'            => 'required_if:role,student|string|max:100',
         ]);
 
         $response = $api->register([
@@ -64,6 +65,7 @@ class AuthController extends Controller
             'password'              => $request->password,
             'password_confirmation' => $request->password_confirmation,
             'role'                  => $request->role,
+            'student_id'            => $request->role === 'student' ? $request->student_id : null,
         ]);
 
         // Registration failed — show error from API
