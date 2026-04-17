@@ -295,9 +295,8 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       <div class="form-group"><label>Full Name</label><input type="text" name="name" value="{{ $user['name'] }}" required></div>
       <div class="form-group"><label>Email</label><input type="email" value="{{ $user['email'] }}" readonly></div>
       <div class="form-group">
-        <label>School ID</label>
-        {{-- FIX: guard $studentData['id'] --}}
-        <input type="text" value="STU-{{ str_pad($studentData['id'] ?? $user['id'] ?? 0, 4, '0', STR_PAD_LEFT) }}" readonly>
+        <label>Student ID</label>
+        <input type="text" value="{{ $user['member_id'] ?? ('stu-' . str_pad($studentData['id'] ?? $user['id'] ?? 1, 4, '0', STR_PAD_LEFT)) }}" readonly>
       </div>
       <div class="form-group">
         <label>Grade</label>

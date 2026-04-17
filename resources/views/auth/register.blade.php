@@ -303,15 +303,6 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
           </div>
         </div>
 
-        <!-- Student ID (shown only for student role) -->
-        <div class="form-group" id="student-id-group" style="{{ old('role') === 'student' ? '' : 'display:none;' }}">
-          <label for="student_id">Student ID</label>
-          <div class="input-wrap">
-            <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8"/><path d="M8 14h5"/></svg></span>
-            <input type="text" id="student_id" name="student_id" placeholder="e.g. 2026-00123" value="{{ old('student_id') }}">
-          </div>
-        </div>
-
         <!-- Full name -->
         <div class="form-group">
           <label for="name">Full Name</label>
@@ -384,23 +375,6 @@ window.addEventListener('load', () => {
   }, 2000);
 });
 
-function toggleStudentIdField() {
-  const studentRadio = document.getElementById('role-student');
-  const studentGroup = document.getElementById('student-id-group');
-  const studentInput = document.getElementById('student_id');
-  if (!studentRadio || !studentGroup || !studentInput) return;
-
-  const show = studentRadio.checked;
-  studentGroup.style.display = show ? '' : 'none';
-  studentInput.required = show;
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('input[name="role"]').forEach((radio) => {
-    radio.addEventListener('change', toggleStudentIdField);
-  });
-  toggleStudentIdField();
-});
 </script>
 </body>
 </html>

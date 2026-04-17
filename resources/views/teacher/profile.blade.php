@@ -149,6 +149,7 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
             <input type="hidden" name="avatar" value="{{ $user['avatar'] ?? '' }}">
             <div class="form-group"><label>Full Name</label><input type="text" name="name" value="{{ $user['name'] }}" required></div>
             <div class="form-group"><label>Email Address</label><input type="email" name="email" value="{{ $user['email'] }}"></div>
+            <div class="form-group"><label>Teacher ID</label><input type="text" value="{{ $user['member_id'] ?? ('tch-' . str_pad($user['id'] ?? 1, 4, '0', STR_PAD_LEFT)) }}" readonly></div>
             <div class="form-group"><label>Role</label><input type="text" value="Teacher" readonly></div>
             <div class="form-group"><label>Member Since</label><input type="text" value="{{ \Carbon\Carbon::parse($user['created_at'])->format('F d, Y') }}" readonly></div>
             <button type="submit" class="btn btn-primary">Update Profile</button>
