@@ -407,7 +407,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       @endif
     </div>
 
-    @forelse($stories as $story)
+    @forelse(($stories ?? []) as $story)
       <div class="story-card">
         <div class="story-header">
           <span class="story-tag">🤖 AI-Generated</span>
@@ -418,12 +418,9 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         <div class="story-text">{{ $story['story'] }}</div>
         {{-- FIX: handle both target_words string and target_patterns array --}}
         @php
-          $targetWords = $story['target_patterns'] ?? [];
-          if(empty($targetWords) && !empty($story['target_words'])) {
-            $targetWords = is_array($story['target_words'])
-              ? $story['target_words']
-              : explode(',', $story['target_words']);
-          }
+            $storyText = is_array($story) ? ($story['story'] ?? $story['content'] ?? '') : (string)$story;
+            $storyDate = is_array($story) ? ($story['created_at'] ?? null) : null;
+            $storyId   = is_array($story) ? ($story['id'] ?? $loop->index) : $loop->index;
         @endphp
         @if(!empty($targetWords))
           <div class="story-words">
