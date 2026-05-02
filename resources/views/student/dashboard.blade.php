@@ -307,6 +307,53 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       <div class="stat-label">Avg Score</div>
     </div>
   </div>
+  
+  {{-- JOIN CLASS BANNER --}}
+  @if(empty($student['school_class_id'] ?? null))
+    <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid rgba(59,130,246,.2);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div style="font-size:1.6rem;flex-shrink:0">🏫</div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:#1E40AF;margin-bottom:.2rem">Join a Class</div>
+        <div style="font-size:.78rem;color:#3B82F6;line-height:1.5">Ask your teacher for the Class ID, then enter it below with your Student ID.</div>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:18px;border:1.5px solid rgba(0,0,0,.06);padding:1.25rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.04)">
+      <div style="font-family:'Baloo 2',cursive;font-size:.98rem;font-weight:700;color:#111827;margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem">
+        <div style="width:28px;height:28px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:.85rem">🔑</div>
+        Join a Class
+      </div>
+      @if(session('success'))
+        <div style="background:#ECFDF5;border:1.5px solid rgba(5,150,105,.2);color:#059669;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem">✓ {{ session('success') }}</div>
+      @endif
+      @if($errors->has('student_id'))
+        <div style="background:#FEF2F2;border:1.5px solid rgba(220,38,38,.2);color:#DC2626;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem">{{ $errors->first('student_id') }}</div>
+      @endif
+      <form method="POST" action="{{ route('student.join') }}">
+        @csrf
+        <div style="margin-bottom:.85rem">
+          <label style="font-size:.73rem;font-weight:600;color:#374151;display:block;margin-bottom:.32rem">Your Student ID</label>
+          <input type="text" name="student_id"
+            value="{{ session('user')['student_id'] ?? '' }}"
+            placeholder="e.g. 2026-0001"
+            style="width:100%;padding:.68rem .9rem;border:1.5px solid #E5E7EB;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:#111827;outline:none"
+            readonly>
+          <div style="font-size:.68rem;color:#9CA3AF;margin-top:.25rem">This is your unique student ID from your account.</div>
+        </div>
+        <div style="margin-bottom:.85rem">
+          <label style="font-size:.73rem;font-weight:600;color:#374151;display:block;margin-bottom:.32rem">Class ID</label>
+          <input type="text" name="class_code"
+            placeholder="Enter the 6-character class code e.g. AB3X7K"
+            style="text-transform:uppercase"
+            style="width:100%;padding:.68rem .9rem;border:1.5px solid #E5E7EB;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:#111827;outline:none"
+            required>
+        </div>
+        <button type="submit"
+          style="width:100%;padding:.72rem;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;border:none;border-radius:10px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s">
+          🏫 Join Class
+        </button>
+      </form>
+    </div>
+  @endif
 
   {{-- LEVEL PROGRESS --}}
   @php

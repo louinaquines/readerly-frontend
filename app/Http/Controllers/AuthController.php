@@ -64,15 +64,19 @@ class AuthController extends Controller
 
         $generatedMemberId = $this->nextMemberId($request->role);
 
-        $response = $api->register([
+        $payload = [
             'name'                  => $request->name,
             'email'                 => $request->email,
             'password'              => $request->password,
             'password_confirmation' => $request->password_confirmation,
             'role'                  => $request->role,
-            // API expects student_id for student registration.
-            'student_id'            => $request->role === 'student' ? $generatedMemberId : null,
-        ]);
+        ];
+
+        if ($request->role === 'student') {
+            $payload['student_id'] = (string) $generatedMemberId;
+        }
+
+        $response = $api->register($payload);
 
         // Registration failed — show error from API
         if (!isset($response['access_token'])) {

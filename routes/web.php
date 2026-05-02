@@ -27,15 +27,17 @@ Route::middleware('api.auth:teacher')->group(function () {
     Route::get('/teacher/reports', [TeacherController::class, 'reports'])->name('teacher.reports');
     Route::get('/teacher/analytics', [TeacherController::class, 'analytics'])->name('teacher.analytics');
     Route::get('/teacher/notifications', [TeacherController::class, 'notifications'])->name('teacher.notifications');
-
+    Route::post('/teacher/classes/store', [TeacherController::class, 'storeClass'])->name('teacher.classes.store');
 });
 
-// Teacher profile
-Route::get('/teacher/profile', [TeacherController::class, 'profile'])->name('teacher.profile');
-Route::post('/teacher/profile/update', [TeacherController::class, 'updateProfile'])->name('teacher.profile.update');
-Route::post('/teacher/profile/password', [TeacherController::class, 'updatePassword'])->name('teacher.profile.password');
-Route::post('/teacher/profile/photo', [TeacherController::class, 'updatePhoto'])->name('teacher.profile.photo');
-Route::delete('/teacher/profile/delete', [TeacherController::class, 'deleteAccount'])->name('teacher.profile.delete');
+// Teacher profile — inside auth group
+Route::middleware('api.auth:teacher')->group(function () {
+    Route::get('/teacher/profile', [TeacherController::class, 'profile'])->name('teacher.profile');
+    Route::post('/teacher/profile/update', [TeacherController::class, 'updateProfile'])->name('teacher.profile.update');
+    Route::post('/teacher/profile/password', [TeacherController::class, 'updatePassword'])->name('teacher.profile.password');
+    Route::post('/teacher/profile/photo', [TeacherController::class, 'updatePhoto'])->name('teacher.profile.photo');
+    Route::delete('/teacher/profile/delete', [TeacherController::class, 'deleteAccount'])->name('teacher.profile.delete');
+});
 
 // Student profile
 Route::middleware('api.auth:student')->group(function () {
@@ -49,6 +51,7 @@ Route::middleware('api.auth:student')->group(function () {
 // Student routes
 Route::middleware('api.auth:student')->group(function () {
     Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+    Route::post('/student/class/join', [StudentController::class, 'joinClass'])->name('student.join');
 });
 
 // Reader (shared)

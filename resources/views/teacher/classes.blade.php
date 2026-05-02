@@ -14,14 +14,12 @@
   --blue:#1E40AF;--blue-mid:#3B82F6;--blue-light:#EFF6FF;--blue-dark:#1E3A5F;
   --blue-50:#EFF6FF;--blue-100:#DBEAFE;
   --green:#059669;--green-light:#ECFDF5;--green-mid:#D1FAE5;
-  --red:#DC2626;--red-light:#FEF2F2;--red-mid:#FEE2E2;
-  --white:#fff;
+  --red:#DC2626;--red-light:#FEF2F2;
   --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;
   --gray-300:#D1D5DB;--gray-400:#9CA3AF;--gray-500:#6B7280;
   --gray-700:#374151;--gray-900:#111827;
   --font-display:'Baloo 2',cursive;--font-body:'DM Sans',sans-serif;
-  --sidebar-w:240px;--topbar-h:64px;
-  --radius:12px;--radius-lg:18px;--radius-xl:24px;
+  --sidebar-w:240px;--topbar-h:64px;--radius:12px;--radius-lg:18px;--radius-xl:24px;
 }
 body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900);min-height:100vh}
 
@@ -38,6 +36,9 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:.75rem}
 .page-title{font-family:var(--font-display);font-size:clamp(1.65rem,4vw,2.1rem);font-weight:800;color:var(--gray-900);line-height:1.1}
 
+.create-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;font-family:var(--font-display);font-size:.9rem;font-weight:700;padding:.7rem 1.4rem;border-radius:50px;border:none;cursor:pointer;transition:all .2s;text-decoration:none}
+.create-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(30,64,175,.3)}
+
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem}
 .class-card{background:#fff;border-radius:var(--radius-lg);border:1.5px solid var(--gray-200);text-decoration:none;display:block;transition:all .25s;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .class-card:hover{transform:translateY(-4px);border-color:var(--blue-mid);box-shadow:0 16px 40px rgba(0,0,0,.1)}
@@ -48,6 +49,8 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 .class-name{font-family:var(--font-display);font-size:1.25rem;font-weight:800;color:var(--gray-900);line-height:1.25;margin-bottom:.4rem}
 .class-meta{font-size:.82rem;color:var(--gray-500);display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .class-grade{background:var(--gray-100);color:var(--gray-700);font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:50px}
+.class-id-badge{background:rgba(30,64,175,.1);color:var(--blue);font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:50px;display:inline-flex;align-items:center;gap:.3rem;margin-top:.5rem;cursor:pointer;transition:all .2s}
+.class-id-badge:hover{background:var(--blue);color:#fff}
 
 .class-body{padding:1.5rem 1.75rem}
 .class-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem}
@@ -67,7 +70,29 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 .empty-state{background:#fff;border-radius:var(--radius-xl);border:2px dashed var(--gray-200);padding:4rem 2rem;text-align:center;grid-column:1/-1}
 .empty-icon{font-size:4rem;margin-bottom:1rem}
 .empty-title{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem}
-.empty-subtitle{font-size:.95rem;color:var(--gray-500);line-height:1.6;max-width:400px;margin:0 auto}
+.empty-subtitle{font-size:.95rem;color:var(--gray-500);line-height:1.6;max-width:400px;margin:0 auto 2rem}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:2rem;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,.15)}
+.modal-title{font-family:var(--font-display);font-size:1.25rem;font-weight:800;color:var(--gray-900);margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.form-group{margin-bottom:1rem}
+.form-group label{font-size:.75rem;font-weight:600;color:var(--gray-700);display:block;margin-bottom:.35rem}
+.form-group input,.form-group select{width:100%;padding:.7rem .95rem;border:1.5px solid var(--gray-200);border-radius:10px;font-family:var(--font-body);font-size:.88rem;color:var(--gray-900);outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.5rem}
+.btn-primary{flex:1;padding:.75rem;background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border:none;border-radius:10px;font-family:var(--font-display);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(30,64,175,.3)}
+.btn-cancel{padding:.75rem 1.25rem;background:var(--gray-100);color:var(--gray-700);border:none;border-radius:10px;font-family:var(--font-body);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{background:var(--gray-200)}
+
+.alert-success{background:var(--green-light);border:1.5px solid rgba(5,150,105,.2);color:var(--green);border-radius:10px;padding:.75rem 1rem;font-size:.83rem;margin-bottom:1.5rem}
+.alert-error{background:var(--red-light);border:1.5px solid rgba(220,38,38,.2);color:var(--red);border-radius:10px;padding:.75rem 1rem;font-size:.83rem;margin-bottom:1.5rem}
+
+/* copied badge tooltip */
+.copy-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--gray-900);color:#fff;font-size:.82rem;font-weight:600;padding:.6rem 1.25rem;border-radius:50px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:400}
+.copy-toast.show{opacity:1}
 
 @media(max-width:768px){
   .main{margin-left:0}
@@ -97,12 +122,14 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   <div class="content">
     <div class="page-header">
       <h1 class="page-title">My Classes</h1>
+      <button class="create-btn" onclick="openModal()">＋ Create Class</button>
     </div>
 
     @if(session('success'))
-      <div style="background:var(--green-light);border:1px solid var(--green-mid);border-radius:var(--radius);padding:1rem;margin-bottom:1.5rem;color:var(--green);font-weight:500">
-        {{ session('success') }}
-      </div>
+      <div class="alert-success">✓ {{ session('success') }}</div>
+    @endif
+    @if($errors->any())
+      <div class="alert-error">{{ $errors->first() }}</div>
     @endif
 
     <div class="class-grid">
@@ -126,6 +153,10 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
               @if(isset($class['grade_level']))
                 <span class="class-grade">Grade {{ $class['grade_level'] }}</span>
               @endif
+            </div>
+            <div class="class-id-badge"
+                onclick="event.preventDefault();copyClassId('{{ $class['class_code'] ?? 'N/A' }}', this)">
+              🔑 Class Code: {{ $class['class_code'] ?? 'N/A' }} — tap to copy
             </div>
           </div>
           <div class="class-body">
@@ -159,24 +190,77 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
         <div class="empty-state">
           <div class="empty-icon">🏫</div>
           <div class="empty-title">No Classes Yet</div>
-          <div class="empty-subtitle">Classes are created in the backend. Contact your administrator if you expect to see classes here.</div>
-          <div style="margin-top:2rem">
-            <a href="{{ route('teacher.dashboard') }}" style="background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;font-weight:600;font-size:.95rem;padding:1rem 2rem;border-radius:14px;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem">← Back to Dashboard</a>
-          </div>
+          <div class="empty-subtitle">Create your first class and share the Class ID with your students so they can join.</div>
+          <button class="create-btn" onclick="openModal()">＋ Create Your First Class</button>
         </div>
       @endforelse
     </div>
   </div>
 </div>
 
+{{-- CREATE CLASS MODAL --}}
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">🏫 Create New Class</div>
+    <form method="POST" action="{{ route('teacher.classes.store') }}">
+      @csrf
+      <div class="form-group">
+        <label>Class Name</label>
+        <input type="text" name="name" placeholder="e.g. Grade 1 - Section A" required>
+      </div>
+      <div class="form-group">
+        <label>Grade Level</label>
+        <select name="grade_level" required>
+          <option value="">Select grade…</option>
+          @for($g = 1; $g <= 6; $g++)
+            <option value="{{ $g }}">Grade {{ $g }}</option>
+          @endfor
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Create Class</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="copy-toast" id="copyToast">✓ Class ID copied!</div>
+
 <script>
 function updateTime() {
   const el = document.getElementById('topbarTime');
-  if (!el) return;
-  el.textContent = new Date().toLocaleTimeString('en-PH', {hour:'2-digit',minute:'2-digit'});
+  if (el) el.textContent = new Date().toLocaleTimeString('en-PH', {hour:'2-digit',minute:'2-digit'});
 }
 updateTime();
 setInterval(updateTime, 60000);
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function copyClassId(id, el) {
+  navigator.clipboard.writeText(String(id)).then(() => {
+    el.textContent = '✓ Copied!';
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+      el.innerHTML = '🔑 Class ID: ' + id + ' — tap to copy';
+    }, 2000);
+  });
+}
+
+@if(session('success'))
+  // Auto-close modal on success
+  closeModal();
+@endif
 </script>
 </body>
 </html>

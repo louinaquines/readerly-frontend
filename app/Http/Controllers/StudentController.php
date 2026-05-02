@@ -168,4 +168,23 @@ $user['reading_level'] = $student['reading_level'] ?? 1;
         session()->flush();
         return redirect()->route('login');
     }
+
+    public function joinClass(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'class_code' => 'required|string',
+            'student_id' => 'required|string',
+        ]);
+
+        $response = $this->api()->post('/api/classes/enroll', [
+            'student_id' => $request->student_id,
+            'class_code' => $request->class_code,
+        ]);
+
+        if ($response->successful()) {
+            return back()->with('success', 'Successfully joined the class!');
+        }
+
+        return back()->withErrors(['class_code' => $response->json('message') ?? 'Failed to join. Check the class code.']);
+    }
 }

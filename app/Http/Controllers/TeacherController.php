@@ -15,76 +15,75 @@ class TeacherController extends Controller
             ->baseUrl(config('services.api.base_url'));
     }
 
-public function dashboard()
-{
-    $user = session('user');
+    public function dashboard()
+    {
+        $user = session('user');
 
-    if (!$user || session('role') !== 'teacher') {
-        session()->flush();
-        return redirect()->route('login')->withErrors(['email' => 'Unauthorized access.']);
-    }
+        if (!$user || session('role') !== 'teacher') {
+            session()->flush();
+            return redirect()->route('login')->withErrors(['email' => 'Unauthorized access.']);
+        }
 
-    $response = $this->api()->get('/api/classes');
+        $response = $this->api()->get('/api/classes');
 
-    if ($response->status() === 401) {
-        session()->flush();
-        return redirect()->route('login')->withErrors(['email' => 'Session expired.']);
-    }
+        if ($response->status() === 401) {
+            session()->flush();
+            return redirect()->route('login')->withErrors(['email' => 'Session expired.']);
+        }
 
-    $flatList = $response->json() ?? [];
+        $flatList = $response->json() ?? [];
 
-    // /api/classes returns flat list with no students — fetch each class detail
-    $classes = array_map(function ($basicClass) {
-        $detail   = $this->api()->get("/api/classes/{$basicClass['id']}")->json() ?? [];
-        $students = $detail['students'] ?? [];
+        $classes = array_map(function ($basicClass) {
+            $detail   = $this->api()->get("/api/classes/{$basicClass['id']}")->json() ?? [];
+            $students = $detail['students'] ?? [];
 
-        $students = array_map(function ($student) use ($basicClass) {
-            $sessions = $this->api()
-                ->get("/api/students/{$student['id']}/sessions")
-                ->json() ?? [];
+            $students = array_map(function ($student) use ($basicClass) {
+                $sessions = $this->api()
+                    ->get("/api/students/{$student['id']}/sessions")
+                    ->json() ?? [];
 
-            $withScores = array_filter($sessions, fn($s) =>
-                !is_null($s['accuracy_score'] ?? $s['score'] ?? null)
-            );
-            $latest = count($withScores) ? end($withScores) : null;
+                $withScores = array_filter($sessions, fn($s) =>
+                    !is_null($s['accuracy_score'] ?? $s['score'] ?? null)
+                );
+                $latest = count($withScores) ? end($withScores) : null;
 
-            $student['class_id']         = $basicClass['id'];
-            $student['latest_score']     = $latest
-                ? ($latest['accuracy_score'] ?? $latest['score'] ?? null)
-                : null;
-            $student['sessions_count']   = count($sessions);
-            $student['pending_sessions'] = count(array_filter($sessions,
-                fn($s) => ($s['status'] ?? '') === 'pending'
-            ));
-            return $student;
-        }, $students);
+                $student['class_id']         = $basicClass['id'];
+                $student['latest_score']     = $latest
+                    ? ($latest['accuracy_score'] ?? $latest['score'] ?? null)
+                    : null;
+                $student['sessions_count']   = count($sessions);
+                $student['pending_sessions'] = count(array_filter($sessions,
+                    fn($s) => ($s['status'] ?? '') === 'pending'
+                ));
+                return $student;
+            }, $students);
 
-        $detail['students'] = $students;
-        return $detail;
-    }, $flatList);
+            $detail['students'] = $students;
+            return $detail;
+        }, $flatList);
 
-    $recentSessions = [];
-    foreach ($classes as $class) {
-        foreach ($class['students'] ?? [] as $student) {
-            $sessions = $this->api()
-                ->get("/api/students/{$student['id']}/sessions")
-                ->json() ?? [];
-            foreach ($sessions as $session) {
-                $session['student_name'] = $student['name'];
-                $session['student_id']   = $student['id'];
-                $session['class_id']     = $class['id'];
-                $session['score']        = $session['accuracy_score'] ?? $session['score'] ?? null;
-                $recentSessions[]        = $session;
+        $recentSessions = [];
+        foreach ($classes as $class) {
+            foreach ($class['students'] ?? [] as $student) {
+                $sessions = $this->api()
+                    ->get("/api/students/{$student['id']}/sessions")
+                    ->json() ?? [];
+                foreach ($sessions as $session) {
+                    $session['student_name'] = $student['name'];
+                    $session['student_id']   = $student['id'];
+                    $session['class_id']     = $class['id'];
+                    $session['score']        = $session['accuracy_score'] ?? $session['score'] ?? null;
+                    $recentSessions[]        = $session;
+                }
             }
         }
+
+        usort($recentSessions, fn($a, $b) =>
+            strtotime($b['updated_at'] ?? 0) - strtotime($a['updated_at'] ?? 0)
+        );
+
+        return view('teacher.dashboard', compact('classes', 'user', 'recentSessions'));
     }
-
-    usort($recentSessions, fn($a, $b) =>
-        strtotime($b['updated_at'] ?? 0) - strtotime($a['updated_at'] ?? 0)
-    );
-
-    return view('teacher.dashboard', compact('classes', 'user', 'recentSessions'));
-}
     public function showClass(int $classId)
     {
         $response = $this->api()->get("/api/classes/{$classId}");
@@ -196,6 +195,7 @@ public function dashboard()
 
         return $pdf->download($student['name'] . '-reading-report.pdf');
     }
+    
     public function allClasses()
     {
         $response = $this->api()->get('/api/classes');
@@ -371,5 +371,24 @@ public function dashboard()
 
         session()->flush();
         return redirect()->route('login')->with('message', 'Account deleted.');
+    }
+
+    public function storeClass(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'name'        => 'required|string',
+            'grade_level' => 'required|string',
+        ]);
+
+        $response = $this->api()->post('/api/classes', [
+            'name'        => $request->name,
+            'grade_level' => $request->grade_level,
+        ]);
+
+        if ($response->successful()) {
+            return redirect()->route('teacher.classes')->with('success', 'Class created successfully!');
+        }
+
+        return back()->withErrors(['name' => $response->json('message') ?? 'Failed to create class.']);
     }
 }
