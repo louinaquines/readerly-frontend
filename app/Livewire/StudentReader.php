@@ -12,7 +12,7 @@ class StudentReader extends Component
     public string $passage      = '';
     public string $transcript   = '';
     public array  $errorPatterns = [];
-    public ?int   $accuracyScore = null;
+    public mixed $accuracyScore = null;
     public string $status        = 'idle'; // idle | submitting | done
 
     public function mount(int $sessionId, int $studentId, string $passage): void
@@ -24,8 +24,8 @@ class StudentReader extends Component
 
     public function submitReading(string $transcript): void
     {
-        $this->status      = 'submitting';
-        $this->transcript  = $transcript;
+        $this->status        = 'submitting';
+        $this->transcript    = $transcript;
         $this->errorPatterns = $this->detectErrors($transcript);
 
         $token = session('api_token');
@@ -47,10 +47,11 @@ class StudentReader extends Component
 
         $data = $response->json();
 
-        // API may return accuracy_score or score — handle both
-        $this->accuracyScore = $data['accuracy_score']
-            ?? $data['score']
-            ?? $this->calculateLocalScore($this->errorPatterns);
+        $this->accuracyScore = isset($data['accuracy_score'])
+            ? (int) $data['accuracy_score']
+            : (isset($data['score'])
+                ? (int) $data['score']
+                : $this->calculateLocalScore($this->errorPatterns));
 
         $this->status = 'done';
     }
