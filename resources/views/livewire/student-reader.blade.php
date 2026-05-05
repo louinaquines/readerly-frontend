@@ -1,5 +1,6 @@
 <style>
 .reader-wrap{width:100%}
+.readerly-icon{width:1em;height:1em;display:inline-block;vertical-align:-.125em;flex-shrink:0}
 
 /* ── PASSAGE ── */
 .passage-box{
@@ -115,7 +116,11 @@
 .score-card.high{background:linear-gradient(135deg,#D1FAE5,#ECFDF5);border:2px solid rgba(5,150,105,.2)}
 .score-card.mid{background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:2px solid rgba(245,158,11,.2)}
 .score-card.low{background:linear-gradient(135deg,#FEE2E2,#FEF2F2);border:2px solid rgba(220,38,38,.2)}
-.score-emoji{font-size:3rem;margin-bottom:.5rem;display:block}
+.score-icon{
+  width:58px;height:58px;border-radius:18px;margin:0 auto .85rem;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  background:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.8)
+}
 .score-circle{
   width:100px;height:100px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -193,6 +198,26 @@
 .done-btn-retry{background:#EFF6FF;color:#1E40AF;border:1.5px solid rgba(59,130,246,.25)}
 .done-btn-retry:hover{background:#1E40AF;color:#fff}
 
+/* ── MANUAL FALLBACK ── */
+.manual-entry{
+  display:none;background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;
+  padding:1rem 1.1rem;margin-bottom:1rem
+}
+.manual-entry.open{display:block}
+.manual-label{font-size:.72rem;font-weight:700;color:#374151;margin-bottom:.45rem;font-family:'DM Sans',sans-serif}
+.manual-textarea{
+  width:100%;min-height:120px;resize:vertical;border:1.5px solid #E5E7EB;
+  border-radius:12px;padding:.8rem .9rem;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;line-height:1.6;color:#374151;outline:none
+}
+.manual-textarea:focus{border-color:#F97316;box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+.reader-alert{
+  display:flex;align-items:flex-start;gap:.55rem;background:#FEF2F2;
+  color:#991B1B;border:1.5px solid rgba(220,38,38,.18);
+  border-radius:12px;padding:.75rem .9rem;margin-bottom:1rem;
+  font-size:.82rem;line-height:1.5;font-family:'DM Sans',sans-serif
+}
+
 /* ── SUBMITTING ── */
 .submitting-state{text-align:center;padding:2.5rem 1.5rem}
 .submitting-spinner{
@@ -208,6 +233,9 @@
   .pword{font-size:.98rem;padding:4px 9px}
   .score-stats{grid-template-columns:repeat(3,1fr)}
   .reader-controls{flex-direction:column}
+  .ctrl-btn,.done-btn{width:100%}
+  .done-actions{flex-direction:column}
+  .waveform-row{align-items:flex-start}
 }
 </style>
 
@@ -217,7 +245,6 @@
   @if($accuracyScore !== null)
     @php
       $tier  = $accuracyScore >= 80 ? 'high' : ($accuracyScore >= 60 ? 'mid' : 'low');
-      $emoji = $accuracyScore >= 80 ? '🎉' : ($accuracyScore >= 60 ? '💪' : '📖');
       $msg   = $accuracyScore >= 80
         ? 'Excellent work! Keep it up!'
         : ($accuracyScore >= 60
@@ -314,7 +341,15 @@
     @endphp
 
     <div class="score-card {{ $tier }}">
-      <span class="score-emoji">{{ $emoji }}</span>
+      <div class="score-icon">
+        @if($tier === 'high')
+          <x-icon name="trophy" />
+        @elseif($tier === 'mid')
+          <x-icon name="zap" />
+        @else
+          <x-icon name="book-open" />
+        @endif
+      </div>
       <div class="score-circle">{{ $accuracyScore }}%</div>
       <div class="score-label">Reading Accuracy</div>
       <div class="score-message">{{ $msg }}</div>
@@ -349,7 +384,7 @@
     @if($feedbackMsg)
       <div class="ai-feedback">
         <div class="ai-feedback-header">
-          <div class="ai-feedback-icon">💡</div>
+          <div class="ai-feedback-icon"><x-icon name="sparkles" /></div>
           <div class="ai-feedback-title">Reading Coach Feedback</div>
         </div>
         <div class="ai-feedback-text">{{ $feedbackMsg }}</div>
@@ -375,10 +410,10 @@
 
     <div class="done-actions">
       <a href="{{ route('student.dashboard') }}" class="done-btn done-btn-home">
-        🏠 Back to Dashboard
+        <x-icon name="home" /> Back to Dashboard
       </a>
       <button onclick="window.location.reload()" class="done-btn done-btn-retry">
-        🔄 Try Again
+        <x-icon name="mic" /> Try Again
       </button>
     </div>
 
@@ -386,12 +421,19 @@
   @elseif($status === 'submitting')
     <div class="submitting-state">
       <div class="submitting-spinner"></div>
-      <div class="submitting-title">Analyzing your reading…</div>
+      <div class="submitting-title">Analyzing your reading...</div>
       <div class="submitting-sub">Please keep this page open. This will only take a moment.</div>
     </div>
 
   {{-- ── READING SCREEN ── --}}
   @else
+    @if($submitError)
+      <div class="reader-alert">
+        <x-icon name="alert-triangle" />
+        <span>{{ $submitError }}</span>
+      </div>
+    @endif
+
     <div class="passage-box">
       <div class="passage-header">
         <span class="passage-label">Read this passage</span>
@@ -431,12 +473,20 @@
       </div>
     </div>
 
+    <div class="manual-entry" id="manualEntry">
+      <div class="manual-label">Manual fallback</div>
+      <textarea id="manualTranscript" class="manual-textarea" placeholder="If your microphone is unavailable, type the words you read here, then submit."></textarea>
+    </div>
+
     <div class="reader-controls">
       <button class="ctrl-btn ctrl-start" id="startBtn" onclick="startListening()">
-        🎤 Start Reading
+        <x-icon name="mic" /> Start Reading
       </button>
       <button class="ctrl-btn ctrl-stop" id="stopBtn" onclick="stopListening()" style="display:none">
-        ⏹ Stop &amp; Submit
+        <x-icon name="check" /> Stop &amp; Submit
+      </button>
+      <button class="ctrl-btn done-btn-retry" id="manualBtn" onclick="submitManualReading()" style="display:none">
+        <x-icon name="clipboard" /> Submit Typed Reading
       </button>
     </div>
   @endif
@@ -456,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function startListening() {
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Your browser does not support speech recognition. Please use Chrome.');
+    showManualMode('Speech recognition is not available in this browser. You can still type what you read and submit it.');
     return;
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -469,7 +519,8 @@ function startListening() {
   recognition.onstart = () => {
     document.getElementById('startBtn').style.display = 'none';
     document.getElementById('stopBtn').style.display  = '';
-    document.getElementById('statusMain').textContent = '🔴 Listening…';
+    document.getElementById('manualBtn').style.display = 'none';
+    document.getElementById('statusMain').textContent = 'Listening';
     document.getElementById('statusSub').textContent  = 'Speak clearly and read every word';
     document.querySelectorAll('.wbar').forEach(b => {
       b.classList.remove('idle');
@@ -486,12 +537,14 @@ function startListening() {
         interim += event.results[i][0].transcript;
       }
     }
-    document.getElementById('statusSub').textContent = interim || '…';
+    document.getElementById('statusSub').textContent = interim || 'Listening for your next words...';
     highlightWords(finalTranscript + interim);
   };
 
   recognition.onerror = (event) => {
     document.getElementById('statusMain').textContent = 'Microphone error: ' + event.error;
+    document.getElementById('statusSub').textContent = 'Use the typed fallback below, then submit.';
+    showManualMode();
     resetButtons();
   };
 
@@ -511,8 +564,12 @@ function stopListening() {
     recognition.stop();
   }
   resetButtons();
-  document.getElementById('statusMain').textContent = '✅ Done! Submitting…';
-  document.getElementById('statusSub').textContent  = 'Please wait…';
+  if (!finalTranscript.trim()) {
+    showManualMode('I could not hear any words. Type what you read below, then submit.');
+    return;
+  }
+  document.getElementById('statusMain').textContent = 'Done. Submitting...';
+  document.getElementById('statusSub').textContent  = 'Please wait...';
   document.querySelectorAll('.wbar').forEach(b => {
     b.classList.remove('active');
     b.classList.add('idle');
@@ -526,6 +583,36 @@ function resetButtons() {
   const stop  = document.getElementById('stopBtn');
   if (start) start.style.display = '';
   if (stop)  stop.style.display  = 'none';
+}
+
+function showManualMode(message) {
+  const manualEntry = document.getElementById('manualEntry');
+  const manualBtn = document.getElementById('manualBtn');
+  const statusMain = document.getElementById('statusMain');
+  const statusSub = document.getElementById('statusSub');
+  if (manualEntry) manualEntry.classList.add('open');
+  if (manualBtn) manualBtn.style.display = '';
+  if (statusMain) statusMain.textContent = 'Typed reading mode';
+  if (statusSub && message) statusSub.textContent = message;
+}
+
+function submitManualReading() {
+  const textarea = document.getElementById('manualTranscript');
+  const typed = (textarea?.value || '').trim();
+  if (!typed) {
+    if (textarea) textarea.focus();
+    const statusSub = document.getElementById('statusSub');
+    if (statusSub) statusSub.textContent = 'Type the words you read before submitting.';
+    return;
+  }
+  finalTranscript = typed;
+  highlightWords(typed);
+  highlightFinal(typed);
+  document.getElementById('statusMain').textContent = 'Done. Submitting...';
+  document.getElementById('statusSub').textContent = 'Please wait...';
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('manualBtn').disabled = true;
+  @this.submitReading(typed);
 }
 
 function highlightWords(spokenText) {

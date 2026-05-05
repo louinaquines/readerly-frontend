@@ -23,6 +23,7 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#FFF7ED 40%,#FEF3C7 100%);min-height:100vh;color:var(--gray-900)}
+.readerly-icon{width:1em;height:1em;display:inline-block;vertical-align:-.125em;flex-shrink:0}
 
 /* ── TOPBAR ── */
 .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(18px);border-bottom:1px solid rgba(245,158,11,.18);padding:0 clamp(1rem,4vw,2rem);height:64px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
@@ -77,6 +78,10 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 .card{background:#fff;border-radius:18px;border:1.5px solid rgba(0,0,0,.06);padding:clamp(1.1rem,3vw,1.35rem);margin-bottom:1.2rem}
 .card-title{font-family:var(--font-display);font-size:.98rem;font-weight:700;color:var(--gray-900);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
 .ct-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:1.2rem}
+.metric-card{background:#fff;border:1.5px solid rgba(0,0,0,.06);border-radius:16px;padding:.9rem;text-align:center}
+.metric-num{font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:var(--gray-900);line-height:1}
+.metric-label{font-size:.66rem;color:var(--gray-500);font-weight:600;margin-top:.18rem}
 
 /* ── READING LEVEL ── */
 .level-display{display:flex;align-items:center;gap:1.1rem;padding:.95rem;background:var(--gray-50);border-radius:14px}
@@ -130,6 +135,11 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   .profile-hero{flex-direction:column;text-align:center}
   .level-badge-hero{display:none}
   .topbar-logo{font-size:1.2rem}
+  .topbar{height:auto;min-height:64px;padding:.7rem 1rem}
+  .back-link span,.logout-btn span{display:none}
+  .metric-grid{grid-template-columns:1fr}
+  .level-display,.goal-card{align-items:flex-start}
+  .btn{width:100%;justify-content:center}
 }
 </style>
 </head>
@@ -139,7 +149,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 <nav class="topbar">
   <a href="{{ route('student.dashboard') }}" class="topbar-logo">Reader<span>ly</span></a>
   <div class="topbar-right">
-    <a href="{{ route('student.dashboard') }}" class="back-link">← Dashboard</a>
+    <a href="{{ route('student.dashboard') }}" class="back-link"><x-icon name="home" /> <span>Dashboard</span></a>
     <div class="topbar-avatar">
       @if(!empty($user['avatar']) && (str_contains($user['avatar'], 'storage') || str_contains($user['avatar'], 'avatars/')))
         <img src="{{ Storage::url($user['avatar']) }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
@@ -149,7 +159,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     </div>
     <form method="POST" action="{{ route('logout') }}">
       @csrf
-      <button type="submit" class="logout-btn">↩ Logout</button>
+      <button type="submit" class="logout-btn"><x-icon name="log-out" /> <span>Logout</span></button>
     </form>
   </div>
 </nav>
@@ -173,6 +183,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     $allSess        = collect($sessions ?? []);
     $totalRead      = $allSess->whereNotIn('status',['pending'])->count();
     $avgAccuracy    = $allSess->whereNotIn('status',['pending'])->map(fn($s)=>$s['accuracy_score']??$s['score']??null)->filter()->avg() ?? 0;
+    $approvedCount  = $allSess->where('status', 'approved')->count();
   @endphp
   <div class="profile-hero">
     <div class="hero-avatar-wrap">
@@ -214,10 +225,29 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     </div>
   </div>
 
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-num">{{ $totalRead }}</div>
+      <div class="metric-label">Completed</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num">{{ $avgAccuracy > 0 ? round($avgAccuracy) . '%' : '—' }}</div>
+      <div class="metric-label">Average Score</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num">{{ $approvedCount }}</div>
+      <div class="metric-label">Approved</div>
+    </div>
+  </div>
+
   {{-- READING LEVEL --}}
   <div class="card">
     <div class="card-title"><div class="ct-icon" style="background:var(--yellow-light)"><x-icon name="trophy" /></div> Reading Level</div>
-    @php $progress = $totalRead > 0 ? min(100, ($totalRead % 3) / 3 * 100) : 0; @endphp
+    @php
+      $progressModulo = $totalRead % 3;
+      $progress = $totalRead > 0 ? min(100, ($progressModulo / 3) * 100) : 0;
+      $sessionsToNext = $progressModulo === 0 ? 3 : 3 - $progressModulo;
+    @endphp
     <div class="level-display">
       <div class="level-circle" style="background:{{ $levelColors[$readingLevel] ?? '#F97316' }}">{{ $readingLevel }}</div>
       <div style="flex:1;min-width:0">
@@ -226,9 +256,46 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         <div class="level-progress-track">
           <div class="level-progress-fill" style="width:{{ $progress }}%;background:{{ $levelColors[$readingLevel] ?? '#F97316' }}"></div>
         </div>
-        <div class="level-next">{{ 3 - ($totalRead % 3) }} sessions to next level</div>
+        <div class="level-next">{{ $sessionsToNext }} {{ $sessionsToNext === 1 ? 'session' : 'sessions' }} to next level</div>
       </div>
     </div>
+  </div>
+
+  {{-- SOUND MASTERY --}}
+  <div class="card">
+    <div class="card-title"><div class="ct-icon" style="background:var(--purple-light)"><x-icon name="volume" /></div> Sound Mastery</div>
+    @php
+      $allErrors = [];
+      foreach ($allSess as $session) {
+        $patterns = $session['error_patterns'] ?? [];
+        if (is_string($patterns)) {
+          $decoded = json_decode($patterns, true);
+          $patterns = is_array($decoded) ? $decoded : preg_split('/,\s*/', $patterns, -1, PREG_SPLIT_NO_EMPTY);
+        }
+        if (is_array($patterns)) {
+          foreach ($patterns as $pattern) {
+            if (is_string($pattern) && trim($pattern) !== '') $allErrors[] = strtolower(trim($pattern));
+          }
+        }
+      }
+      $errorCounts = collect($allErrors)->countBy();
+      $sounds = ['Ma/Me/Mi' => 'ma', 'Ng/Mga' => 'ng', 'Ba/Be/Bi' => 'ba', 'Pa/Pe/Pi' => 'pa', 'Sa/Se/Si' => 'sa', 'La/Le/Li' => 'la'];
+    @endphp
+    @if($allSess->count() === 0)
+      <p style="font-size:.83rem;color:var(--gray-400)">Start reading sessions to see your mastery progress.</p>
+    @else
+      @foreach($sounds as $label => $key)
+        @php
+          $errCount = $errorCounts->get($key, 0);
+          $pct = max(0, 100 - ($errCount * 15));
+        @endphp
+        <div class="mastery-item">
+          <div class="mastery-sound">{{ $label }}</div>
+          <div class="mastery-bar-wrap"><div class="mastery-bar" style="width:{{ $pct }}%"></div></div>
+          <div class="mastery-pct">{{ $pct }}%</div>
+        </div>
+      @endforeach
+    @endif
   </div>
 
   {{-- WEEKLY STREAK --}}
@@ -238,7 +305,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       $days = ['M','T','W','T','F','S','S'];
       $sessionDays = $allSess->pluck('created_at')
         ->filter()
-        ->map(fn($d) => \Carbon\Carbon::parse($d)->dayOfWeek)
+        ->map(fn($d) => \Carbon\Carbon::parse($d)->isoWeekday() - 1)
         ->unique()->toArray();
     @endphp
     <div class="streak-row">
@@ -255,7 +322,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     @php
       $nextLevel = $readingLevel + 1;
       $nextLevelName = $levelNames[$nextLevel] ?? 'Master';
-      $sessionsLeft = 3 - ($totalRead % 3);
+      $sessionsLeft = $sessionsToNext;
     @endphp
     <div class="goal-card">
       <div class="goal-icon"><x-icon name="arrow-up" /></div>

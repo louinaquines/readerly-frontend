@@ -30,6 +30,13 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
 .content{padding:clamp(1.25rem,3vw,2rem);flex:1}
 .page-title{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--gray-900);letter-spacing:-.3px;margin-bottom:1.5rem}
+.analytics-tools{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.analytics-select,.analytics-btn{height:40px;border-radius:10px;font-family:var(--font-body);font-size:.84rem;font-weight:600;outline:none;transition:all .2s}
+.analytics-select{min-width:180px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);padding:0 .8rem}
+.analytics-select:focus{border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.analytics-btn{display:inline-flex;align-items:center;gap:.4rem;border:1.5px solid var(--blue);background:var(--blue);color:#fff;padding:0 .95rem;cursor:pointer}
+.analytics-btn:hover{background:var(--blue-dark);border-color:var(--blue-dark);transform:translateY(-1px)}
+.analytics-note{font-size:.76rem;color:var(--gray-400);font-weight:500}
 
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(.75rem,2vw,1.1rem);margin-bottom:1.75rem}
 .stat-card{background:#fff;border-radius:var(--radius-lg);border:1.5px solid var(--gray-200);padding:clamp(1rem,2.5vw,1.35rem);transition:transform .2s,box-shadow .2s}
@@ -69,6 +76,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 @media(max-width:420px){
   .stats-row{grid-template-columns:1fr 1fr}
   .content{padding:1rem}
+  .analytics-select,.analytics-btn{width:100%;justify-content:center}
 }
 </style>
 </head>
@@ -88,6 +96,25 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
   <div class="content">
     <div class="page-title" style="display:flex;align-items:center;gap:.5rem"><x-icon name="bar-chart" /> Analytics</div>
+
+    <div class="analytics-tools">
+      <select id="analyticsClassFilter" class="analytics-select">
+        <option value="all">All classes</option>
+        @foreach($classes as $class)
+          <option value="{{ $class['id'] }}">{{ $class['name'] }}</option>
+        @endforeach
+      </select>
+      <select id="analyticsRangeFilter" class="analytics-select">
+        <option value="all">All time</option>
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <button type="button" class="analytics-btn" id="downloadAnalytics">
+        <x-icon name="file-text" /> Export CSV
+      </button>
+      <span class="analytics-note" id="analyticsNote"></span>
+    </div>
 
     @php
       $allStudents = collect($classes)->flatMap(fn($c) => $c['students'] ?? []);
@@ -186,17 +213,66 @@ updateTime();
 setInterval(updateTime, 60000);
 
 const sessions = @json($recentSessions ?? []);
-if (sessions.length > 0) {
-  const withScores = sessions.filter(s => s.score > 0);
-  const high = withScores.filter(s => s.score >= 80).length;
-  const mid  = withScores.filter(s => s.score >= 60 && s.score < 80).length;
-  const low  = withScores.filter(s => s.score < 60).length;
+const classFilter = document.getElementById('analyticsClassFilter');
+const rangeFilter = document.getElementById('analyticsRangeFilter');
+const analyticsNote = document.getElementById('analyticsNote');
+const downloadAnalytics = document.getElementById('downloadAnalytics');
+let distChart = null;
+let timeChart = null;
+
+function scoreOf(session) {
+  const value = Number(session.score ?? session.accuracy_score ?? 0);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function dateOf(session) {
+  const raw = session.updated_at || session.created_at || '';
+  const date = raw ? new Date(raw) : null;
+  return date && !Number.isNaN(date.getTime()) ? date : null;
+}
+
+function filteredSessions() {
+  const selectedClass = classFilter?.value || 'all';
+  const selectedRange = rangeFilter?.value || 'all';
+  const now = new Date();
+
+  return sessions.filter(session => {
+    const matchesClass = selectedClass === 'all' || String(session.class_id) === selectedClass;
+    if (!matchesClass) return false;
+
+    if (selectedRange === 'all') return true;
+    const sessionDate = dateOf(session);
+    if (!sessionDate) return false;
+
+    const days = Number(selectedRange);
+    const cutoff = new Date(now);
+    cutoff.setDate(now.getDate() - days);
+    return sessionDate >= cutoff;
+  });
+}
+
+function renderAnalytics() {
+  if (typeof Chart === 'undefined') {
+    if (analyticsNote) analyticsNote.textContent = 'Charts could not load. Check your internet connection.';
+    return;
+  }
+
+  const scoped = filteredSessions();
+  const withScores = scoped.filter(session => scoreOf(session) > 0);
+  const high = withScores.filter(session => scoreOf(session) >= 80).length;
+  const mid = withScores.filter(session => scoreOf(session) >= 60 && scoreOf(session) < 80).length;
+  const low = withScores.filter(session => scoreOf(session) < 60).length;
+
+  if (analyticsNote) {
+    analyticsNote.textContent = `${scoped.length} sessions, ${withScores.length} scored`;
+  }
 
   if (document.getElementById('distChart')) {
-    new Chart(document.getElementById('distChart'), {
+    distChart?.destroy();
+    distChart = new Chart(document.getElementById('distChart'), {
       type: 'doughnut',
       data: {
-        labels: ['Passing (≥80%)', 'At Risk (60–79%)', 'Struggling (<60%)'],
+        labels: ['Passing (>=80%)', 'At Risk (60-79%)', 'Struggling (<60%)'],
         datasets: [{ data: [high, mid, low], backgroundColor: ['#059669','#F59E0B','#DC2626'], borderWidth: 0, hoverOffset: 6 }]
       },
       options: {
@@ -209,28 +285,61 @@ if (sessions.length > 0) {
 
   if (document.getElementById('timeChart')) {
     const byDate = {};
-    sessions.forEach(s => {
-      const d = (s.updated_at || '').slice(0, 10);
-      if (d) byDate[d] = (byDate[d] || 0) + 1;
+    scoped.forEach(session => {
+      const date = dateOf(session);
+      if (!date) return;
+      const key = date.toISOString().slice(0, 10);
+      byDate[key] = (byDate[key] || 0) + 1;
     });
+
     const sortedDates = Object.keys(byDate).sort();
-    new Chart(document.getElementById('timeChart'), {
+    timeChart?.destroy();
+    timeChart = new Chart(document.getElementById('timeChart'), {
       type: 'bar',
       data: {
-        labels: sortedDates.map(d => new Date(d).toLocaleDateString('en-PH', {month:'short',day:'numeric'})),
-        datasets: [{ label: 'Sessions', data: sortedDates.map(d => byDate[d]), backgroundColor: 'rgba(30,64,175,.15)', borderColor: '#1E40AF', borderWidth: 2, borderRadius: 6 }]
+        labels: sortedDates.map(date => new Date(date).toLocaleDateString('en-PH', {month:'short',day:'numeric'})),
+        datasets: [{ label: 'Sessions', data: sortedDates.map(date => byDate[date]), backgroundColor: 'rgba(30,64,175,.15)', borderColor: '#1E40AF', borderWidth: 2, borderRadius: 6 }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: 'rgba(0,0,0,.05)' } },
+          y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0, font: { family: 'DM Sans' } }, grid: { color: 'rgba(0,0,0,.05)' } },
           x: { ticks: { font: { family: 'DM Sans', size: 11 } }, grid: { display: false } }
         }
       }
     });
   }
 }
+
+function downloadCsv() {
+  const rows = filteredSessions().map(session => ({
+    class: session.class_name || '',
+    student: session.student_name || '',
+    score: scoreOf(session) || '',
+    status: session.status || '',
+    updated_at: session.updated_at || session.created_at || ''
+  }));
+
+  const header = ['Class', 'Student', 'Score', 'Status', 'Updated At'];
+  const body = rows.map(row => [row.class, row.student, row.score, row.status, row.updated_at]
+    .map(value => `"${String(value).replace(/"/g, '""')}"`).join(','));
+  const csv = [header.join(','), ...body].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'readerly-analytics.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+classFilter?.addEventListener('change', renderAnalytics);
+rangeFilter?.addEventListener('change', renderAnalytics);
+downloadAnalytics?.addEventListener('click', downloadCsv);
+renderAnalytics();
 </script>
 </body>
 </html>

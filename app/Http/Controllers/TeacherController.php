@@ -211,34 +211,84 @@ class TeacherController extends Controller
 
     public function reports()
     {
-        $classes = $this->api()->get('/api/classes')->json();
+        $response = $this->api()->get('/api/classes');
+
+        if ($response->status() === 401) {
+            session()->flush();
+            return redirect()->route('login')->withErrors(['email' => 'Session expired.']);
+        }
+
+        $classes = array_map(function ($basicClass) {
+            $detail = $this->api()->get("/api/classes/{$basicClass['id']}")->json() ?? [];
+            $class = array_merge($basicClass, $detail);
+
+            $class['students'] = array_map(function ($student) use ($class) {
+                $sessions = $this->api()
+                    ->get("/api/students/{$student['id']}/sessions")
+                    ->json() ?? [];
+
+                $withScores = array_values(array_filter($sessions, fn($session) =>
+                    !is_null($session['accuracy_score'] ?? $session['score'] ?? null)
+                ));
+
+                usort($withScores, fn($a, $b) =>
+                    strtotime($b['updated_at'] ?? $b['created_at'] ?? 0)
+                    - strtotime($a['updated_at'] ?? $a['created_at'] ?? 0)
+                );
+
+                $student['class_id'] = $class['id'];
+                $student['sessions_count'] = count($sessions);
+                $student['latest_score'] = $withScores[0]['accuracy_score'] ?? $withScores[0]['score'] ?? null;
+
+                return $student;
+            }, $class['students'] ?? []);
+
+            return $class;
+        }, $response->json() ?? []);
+
         return view('teacher.reports', compact('classes'));
     }
 
     public function analytics()
     {
-        $classes = $this->api()->get('/api/classes')->json() ?? [];
+        $response = $this->api()->get('/api/classes');
+
+        if ($response->status() === 401) {
+            session()->flush();
+            return redirect()->route('login')->withErrors(['email' => 'Session expired.']);
+        }
+
+        $flatClasses = $response->json() ?? [];
 
         // Build analytics-ready class and session data shape expected by the view.
         $recentSessions = [];
-        $classes = array_map(function ($class) use (&$recentSessions) {
-            $students = array_map(function ($student) use (&$recentSessions) {
+        $classes = array_map(function ($basicClass) use (&$recentSessions) {
+            $detail = $this->api()->get("/api/classes/{$basicClass['id']}")->json() ?? [];
+            $class = array_merge($basicClass, $detail);
+
+            $students = array_map(function ($student) use (&$recentSessions, $class) {
                 $sessions = $this->api()
                     ->get("/api/students/{$student['id']}/sessions")
                     ->json() ?? [];
 
-                $sessions = array_map(function ($session) use ($student) {
+                $sessions = array_map(function ($session) use ($student, $class) {
                     $session['score'] = $session['score']
                         ?? $session['accuracy_score']
                         ?? null;
                     $session['student_id'] = $student['id'];
                     $session['student_name'] = $student['name'] ?? 'Student';
+                    $session['class_id'] = $class['id'];
+                    $session['class_name'] = $class['name'] ?? 'Class';
                     return $session;
                 }, $sessions);
 
                 $withScores = array_values(array_filter($sessions, fn($s) => !is_null($s['score'] ?? null)));
-                usort($withScores, fn($a, $b) => strtotime($b['updated_at'] ?? 0) - strtotime($a['updated_at'] ?? 0));
+                usort($withScores, fn($a, $b) =>
+                    strtotime($b['updated_at'] ?? $b['created_at'] ?? 0)
+                    - strtotime($a['updated_at'] ?? $a['created_at'] ?? 0)
+                );
                 $student['latest_score'] = $withScores[0]['score'] ?? null;
+                $student['sessions_count'] = count($sessions);
 
                 $recentSessions = array_merge($recentSessions, $sessions);
                 return $student;
@@ -246,7 +296,7 @@ class TeacherController extends Controller
 
             $class['students'] = $students;
             return $class;
-        }, $classes);
+        }, $flatClasses);
 
         usort($recentSessions, fn($a, $b) =>
             strtotime($b['updated_at'] ?? 0) - strtotime($a['updated_at'] ?? 0)

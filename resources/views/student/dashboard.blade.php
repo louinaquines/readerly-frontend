@@ -25,6 +25,7 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#FFF7ED 40%,#FEF3C7 100%);min-height:100vh;color:var(--gray-900)}
+.readerly-icon{width:1em;height:1em;display:inline-block;vertical-align:-.125em;flex-shrink:0}
 
 /* ── TOPBAR ── */
 .topbar{
@@ -61,6 +62,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   padding:.38rem .85rem;cursor:pointer;transition:all .2s;text-decoration:none
 }
 .logout-btn:hover{border-color:var(--orange);color:var(--orange-dark);background:var(--orange-light)}
+.logout-btn,.read-btn,.story-tag,.session-status,.progress-title,.passage-assigned{display:inline-flex;align-items:center;gap:.35rem}
 
 /* ── PAGE ── */
 .page{max-width:960px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) clamp(1rem,4vw,1.5rem)}
@@ -168,6 +170,8 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   box-shadow:0 4px 14px rgba(249,115,22,.3);white-space:nowrap
 }
 .read-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.4)}
+.join-card input{text-transform:uppercase}
+.join-card button{display:inline-flex;align-items:center;justify-content:center;gap:.45rem}
 
 /* ── EMPTY STATE ── */
 .empty-state{
@@ -221,14 +225,21 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 
 /* ── RESPONSIVE ── */
 @media(max-width:600px){
+  .topbar{height:auto;min-height:64px;padding:.7rem 1rem}
+  .topbar-right{gap:.45rem}
   .greeting-right{display:none}
   .passage-footer{flex-direction:column;align-items:flex-start}
   .read-btn{width:100%;justify-content:center}
   .topbar-name{display:none}
+  .logout-btn{padding:.38rem .6rem;font-size:0}
+  .logout-btn .readerly-icon{font-size:.9rem}
+  .stats-row{grid-template-columns:1fr}
+  .stats-row .stat-card:last-child{grid-column:auto}
+  .session-row{align-items:flex-start}
 }
 @media(max-width:400px){
-  .stats-row{grid-template-columns:1fr 1fr}
-  .stats-row .stat-card:last-child{grid-column:span 2}
+  .stats-row{grid-template-columns:1fr}
+  .stats-row .stat-card:last-child{grid-column:auto}
 }
 </style>
 </head>
@@ -249,7 +260,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     <span class="topbar-name">{{ explode(' ', $user['name'])[0] }}</span>
     <form method="POST" action="{{ route('logout') }}">
       @csrf
-      <button type="submit" class="logout-btn">↩ Logout</button>
+      <button type="submit" class="logout-btn"><x-icon name="log-out" /> <span>Logout</span></button>
     </form>
   </div>
 </nav>
@@ -259,6 +270,9 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   {{-- GREETING HERO --}}
   @php
     $pendingCount = collect($sessions)->where('status','pending')->count();
+    $studentId = $student['id'] ?? null;
+    $studentMemberId = $student['student_id'] ?? $user['student_id'] ?? $user['member_id'] ?? '';
+    $hasClass = !empty($student['school_class_id'] ?? $student['class_id'] ?? null);
   @endphp
   <div class="greeting-hero">
     <div class="greeting-left">
@@ -309,7 +323,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   </div>
   
   {{-- JOIN CLASS BANNER --}}
-  @if(empty($student['school_class_id'] ?? null))
+  @if(!$hasClass)
     <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid rgba(59,130,246,.2);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
       <div style="font-size:1.6rem;flex-shrink:0"><x-icon name="school" /></div>
       <div style="flex:1;min-width:180px">
@@ -317,7 +331,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         <div style="font-size:.78rem;color:#3B82F6;line-height:1.5">Ask your teacher for the Class ID, then enter it below with your Student ID.</div>
       </div>
     </div>
-    <div style="background:#fff;border-radius:18px;border:1.5px solid rgba(0,0,0,.06);padding:1.25rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.04)">
+    <div class="join-card" style="background:#fff;border-radius:18px;border:1.5px solid rgba(0,0,0,.06);padding:1.25rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.04)">
       <div style="font-family:'Baloo 2',cursive;font-size:.98rem;font-weight:700;color:#111827;margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem">
         <div style="width:28px;height:28px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:.85rem"><x-icon name="key" /></div>
         Join a Class
@@ -328,12 +342,15 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       @if($errors->has('student_id'))
         <div style="background:#FEF2F2;border:1.5px solid rgba(220,38,38,.2);color:#DC2626;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem">{{ $errors->first('student_id') }}</div>
       @endif
+      @if($errors->has('class_code'))
+        <div style="background:#FEF2F2;border:1.5px solid rgba(220,38,38,.2);color:#DC2626;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem">{{ $errors->first('class_code') }}</div>
+      @endif
       <form method="POST" action="{{ route('student.join') }}">
         @csrf
         <div style="margin-bottom:.85rem">
           <label style="font-size:.73rem;font-weight:600;color:#374151;display:block;margin-bottom:.32rem">Your Student ID</label>
           <input type="text" name="student_id"
-            value="{{ session('user')['student_id'] ?? '' }}"
+            value="{{ $studentMemberId }}"
             placeholder="e.g. 2026-0001"
             style="width:100%;padding:.68rem .9rem;border:1.5px solid #E5E7EB;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:#111827;outline:none"
             readonly>
@@ -343,8 +360,10 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
           <label style="font-size:.73rem;font-weight:600;color:#374151;display:block;margin-bottom:.32rem">Class ID</label>
           <input type="text" name="class_code"
             placeholder="Enter the 6-character class code e.g. AB3X7K"
-            style="text-transform:uppercase"
             style="width:100%;padding:.68rem .9rem;border:1.5px solid #E5E7EB;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:#111827;outline:none"
+            maxlength="12"
+            autocomplete="off"
+            oninput="this.value = this.value.toUpperCase().replace(/\s/g, '')"
             required>
         </div>
         <button type="submit"
@@ -426,9 +445,11 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
             </div>
             <div class="read-btn-wrap">
               <div class="pulse-ring"></div>
-              <a href="{{ route('reader', [$student['id'], $session['id']]) }}" class="read-btn">
-                <x-icon name="mic" /> Read Now
-              </a>
+              @if($studentId)
+                <a href="{{ route('reader', [$studentId, $session['id']]) }}" class="read-btn">
+                  <x-icon name="mic" /> Read Now
+                </a>
+              @endif
             </div>
           </div>
         </div>
@@ -462,13 +483,23 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
             <span class="story-date">{{ \Carbon\Carbon::parse($story['created_at'])->format('M d, Y') }}</span>
           @endif
         </div>
-        <div class="story-text">{{ $story['story'] }}</div>
         {{-- FIX: handle both target_words string and target_patterns array --}}
         @php
             $storyText = is_array($story) ? ($story['story'] ?? $story['content'] ?? '') : (string)$story;
             $storyDate = is_array($story) ? ($story['created_at'] ?? null) : null;
             $storyId   = is_array($story) ? ($story['id'] ?? $loop->index) : $loop->index;
+            $targetWords = [];
+            if (is_array($story)) {
+              $rawTargets = $story['target_words'] ?? $story['target_patterns'] ?? [];
+              if (is_string($rawTargets)) {
+                $decodedTargets = json_decode($rawTargets, true);
+                $targetWords = is_array($decodedTargets) ? $decodedTargets : preg_split('/,\s*/', $rawTargets, -1, PREG_SPLIT_NO_EMPTY);
+              } elseif (is_array($rawTargets)) {
+                $targetWords = $rawTargets;
+              }
+            }
         @endphp
+        <div class="story-text">{{ $storyText ?: 'Practice story content is not available yet.' }}</div>
         @if(!empty($targetWords))
           <div class="story-words">
             @foreach($targetWords as $word)

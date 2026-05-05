@@ -14,6 +14,7 @@ class StudentReader extends Component
     public array  $errorPatterns = [];
     public mixed $accuracyScore = null;
     public string $status        = 'idle'; // idle | submitting | done
+    public ?string $submitError = null;
 
     public function mount(int $sessionId, int $studentId, string $passage): void
     {
@@ -25,25 +26,39 @@ class StudentReader extends Component
     public function submitReading(string $transcript): void
     {
         $this->status        = 'submitting';
-        $this->transcript    = $transcript;
+        $this->submitError   = null;
+        $this->transcript    = trim($transcript);
         $this->errorPatterns = $this->detectErrors($transcript);
 
         $token = session('api_token');
 
         if (!$token) {
             $this->status = 'idle';
+            $this->submitError = 'Your session expired. Please sign in again before submitting.';
             return;
         }
 
-        $response = Http::withToken($token)
-            ->post(
-                config('services.api.base_url')
-                . "/api/students/{$this->studentId}/sessions/{$this->sessionId}/submit",
-                [
-                    'transcript'     => $this->transcript,
-                    'error_patterns' => array_values($this->errorPatterns),
-                ]
-            );
+        try {
+            $response = Http::withToken($token)
+                ->post(
+                    config('services.api.base_url')
+                    . "/api/students/{$this->studentId}/sessions/{$this->sessionId}/submit",
+                    [
+                        'transcript'     => $this->transcript,
+                        'error_patterns' => array_values($this->errorPatterns),
+                    ]
+                );
+        } catch (\Throwable $exception) {
+            $this->status = 'idle';
+            $this->submitError = 'We could not submit your reading. Please check your connection and try again.';
+            return;
+        }
+
+        if ($response->failed()) {
+            $this->status = 'idle';
+            $this->submitError = $response->json('message') ?? 'We could not submit your reading. Please try again.';
+            return;
+        }
 
         $data = $response->json();
 

@@ -18,6 +18,7 @@
     'home' => '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
     'key' => '<circle cx="7.5" cy="14.5" r="4.5"/><path d="M11 11 21 1"/><path d="m17 5 2 2"/><path d="m14 8 2 2"/>',
     'lock' => '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    'log-out' => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
     'mic' => '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>',
     'party' => '<path d="m5 22 14-14"/><path d="m5 22 4-12 8 8z"/><path d="M14 5h.01"/><path d="M18 2h.01"/><path d="M22 6h.01"/><path d="M20 11h.01"/>',
     'pencil' => '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
