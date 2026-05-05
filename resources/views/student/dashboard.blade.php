@@ -263,12 +263,12 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   <div class="greeting-hero">
     <div class="greeting-left">
       <div class="greeting-tag"><div class="tag-dot"></div>Welcome back!</div>
-      <div class="greeting-name">Hello, {{ explode(' ', $user['name'])[0] }}! 👋</div>
+      <div class="greeting-name">Hello, {{ explode(' ', $user['name'])[0] }}! <x-icon name="sparkles" /></div>
       <div class="greeting-sub">
         @if($pendingCount > 0)
           You have <strong>{{ $pendingCount }} passage{{ $pendingCount > 1 ? 's' : '' }}</strong> waiting. You've got this!
         @else
-          Great job! You've completed all passages today. 🎉
+          Great job! You've completed all passages today. <x-icon name="party" />
         @endif
       </div>
     </div>
@@ -292,17 +292,17 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   @endphp
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon" style="background:#FEF3C7">📖</div>
+      <div class="stat-icon" style="background:#FEF3C7"><x-icon name="book-open" /></div>
       <div class="stat-num">{{ $pendingCount }}</div>
       <div class="stat-label">Pending</div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#D1FAE5">✅</div>
+      <div class="stat-icon" style="background:#D1FAE5"><x-icon name="check" /></div>
       <div class="stat-num">{{ $completed }}</div>
       <div class="stat-label">Completed</div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#EDE9FE">⭐</div>
+      <div class="stat-icon" style="background:#EDE9FE"><x-icon name="sparkles" /></div>
       <div class="stat-num">{{ $avgScore > 0 ? round($avgScore).'%' : '—' }}</div>
       <div class="stat-label">Avg Score</div>
     </div>
@@ -311,7 +311,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   {{-- JOIN CLASS BANNER --}}
   @if(empty($student['school_class_id'] ?? null))
     <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid rgba(59,130,246,.2);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-      <div style="font-size:1.6rem;flex-shrink:0">🏫</div>
+      <div style="font-size:1.6rem;flex-shrink:0"><x-icon name="school" /></div>
       <div style="flex:1;min-width:180px">
         <div style="font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;color:#1E40AF;margin-bottom:.2rem">Join a Class</div>
         <div style="font-size:.78rem;color:#3B82F6;line-height:1.5">Ask your teacher for the Class ID, then enter it below with your Student ID.</div>
@@ -319,11 +319,11 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     </div>
     <div style="background:#fff;border-radius:18px;border:1.5px solid rgba(0,0,0,.06);padding:1.25rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.04)">
       <div style="font-family:'Baloo 2',cursive;font-size:.98rem;font-weight:700;color:#111827;margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem">
-        <div style="width:28px;height:28px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:.85rem">🔑</div>
+        <div style="width:28px;height:28px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:.85rem"><x-icon name="key" /></div>
         Join a Class
       </div>
       @if(session('success'))
-        <div style="background:#ECFDF5;border:1.5px solid rgba(5,150,105,.2);color:#059669;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem">✓ {{ session('success') }}</div>
+        <div style="background:#ECFDF5;border:1.5px solid rgba(5,150,105,.2);color:#059669;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem"><x-icon name="check" /> {{ session('success') }}</div>
       @endif
       @if($errors->has('student_id'))
         <div style="background:#FEF2F2;border:1.5px solid rgba(220,38,38,.2);color:#DC2626;border-radius:10px;padding:.7rem .9rem;font-size:.82rem;margin-bottom:.9rem">{{ $errors->first('student_id') }}</div>
@@ -349,7 +349,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         </div>
         <button type="submit"
           style="width:100%;padding:.72rem;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;border:none;border-radius:10px;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s">
-          🏫 Join Class
+          <x-icon name="school" /> Join Class
         </button>
       </form>
     </div>
@@ -364,7 +364,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   @endphp
   <div class="progress-section">
     <div class="progress-header">
-      <div class="progress-title">🏆 Progress to Level {{ ($user['reading_level'] ?? 1) + 1 }}</div>
+      <div class="progress-title"><x-icon name="trophy" /> Progress to Level {{ ($user['reading_level'] ?? 1) + 1 }}</div>
       <div class="progress-pct">{{ $consecutivePassing }}/{{ $sessionsNeeded }}</div>
     </div>
     <div class="progress-track">
@@ -384,7 +384,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   {{-- MOTIVATIONAL BANNER --}}
   @if($pendingCount > 0)
   <div class="moti-banner">
-    <div class="moti-emoji">💪</div>
+    <div class="moti-emoji"><x-icon name="zap" /></div>
     <div class="moti-text">
       <strong>You've got this!</strong><br>
       Tap "Read" to begin. Read aloud clearly to get a high score!
@@ -396,7 +396,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   <div class="passages-section">
     <div class="section-head">
       <div class="section-title">
-        <div class="s-icon" style="background:#FEF3C7">🎤</div>
+        <div class="s-icon" style="background:#FEF3C7"><x-icon name="mic" /></div>
         Passages to Read
       </div>
       @if($pendingCount > 0)
@@ -422,12 +422,12 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
           </div>
           <div class="passage-footer">
             <div class="passage-assigned">
-              📅 {{ isset($session['created_at']) ? \Carbon\Carbon::parse($session['created_at'])->diffForHumans() : 'Recently assigned' }}
+              <x-icon name="calendar" /> {{ isset($session['created_at']) ? \Carbon\Carbon::parse($session['created_at'])->diffForHumans() : 'Recently assigned' }}
             </div>
             <div class="read-btn-wrap">
               <div class="pulse-ring"></div>
               <a href="{{ route('reader', [$student['id'], $session['id']]) }}" class="read-btn">
-                🎤 Read Now
+                <x-icon name="mic" /> Read Now
               </a>
             </div>
           </div>
@@ -435,7 +435,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       </div>
     @empty
       <div class="empty-state">
-        <div class="empty-icon">🎉</div>
+        <div class="empty-icon"><x-icon name="party" /></div>
         <div class="empty-title">No pending passages!</div>
         <div class="empty-sub">You've completed all assigned passages.<br>Check back later for new ones from your teacher.</div>
       </div>
@@ -446,7 +446,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   <div class="stories-section">
     <div class="section-head">
       <div class="section-title">
-        <div class="s-icon" style="background:#EDE9FE">🤖</div>
+        <div class="s-icon" style="background:#EDE9FE"><x-icon name="bot" /></div>
         My Practice Stories
       </div>
       @if(count($stories) > 0)
@@ -457,7 +457,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     @forelse(($stories ?? []) as $story)
       <div class="story-card">
         <div class="story-header">
-          <span class="story-tag">🤖 AI-Generated</span>
+          <span class="story-tag"><x-icon name="bot" /> AI-Generated</span>
           @if(isset($story['created_at']))
             <span class="story-date">{{ \Carbon\Carbon::parse($story['created_at'])->format('M d, Y') }}</span>
           @endif
@@ -479,7 +479,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       </div>
     @empty
       <div class="empty-state">
-        <div class="empty-icon">📝</div>
+        <div class="empty-icon"><x-icon name="pencil" /></div>
         <div class="empty-title">No practice stories yet</div>
         <div class="empty-sub">After reading a passage, an AI story will be generated targeting your specific error patterns.</div>
       </div>
@@ -494,7 +494,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   <div class="completed-section">
     <div class="section-head">
       <div class="section-title">
-        <div class="s-icon" style="background:#D1FAE5">📊</div>
+        <div class="s-icon" style="background:#D1FAE5"><x-icon name="bar-chart" /></div>
         Past Sessions
       </div>
     </div>
@@ -513,7 +513,11 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
           <div class="session-date">{{ isset($session['updated_at']) ? \Carbon\Carbon::parse($session['updated_at'])->format('M d, Y') : '' }}</div>
         </div>
         <span class="session-status {{ ($session['status'] ?? '') === 'approved' ? 'status-approved' : 'status-completed' }}">
-          {{ ($session['status'] ?? '') === 'approved' ? '✓ Approved' : '● Done' }}
+          @if(($session['status'] ?? '') === 'approved')
+            <x-icon name="check" /> Approved
+          @else
+            Done
+          @endif
         </span>
       </div>
     @endforeach

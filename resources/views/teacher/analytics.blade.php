@@ -87,7 +87,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   </div>
 
   <div class="content">
-    <div class="page-title">📊 Analytics</div>
+    <div class="page-title" style="display:flex;align-items:center;gap:.5rem"><x-icon name="bar-chart" /> Analytics</div>
 
     @php
       $allStudents = collect($classes)->flatMap(fn($c) => $c['students'] ?? []);
@@ -99,22 +99,22 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-card-top"><div class="stat-icon" style="background:#DBEAFE">👥</div></div>
+        <div class="stat-card-top"><div class="stat-icon" style="background:#DBEAFE"><x-icon name="users" /></div></div>
         <div class="stat-num">{{ $totalStudents }}</div>
         <div class="stat-label">Total Students</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-top"><div class="stat-icon" style="background:#D1FAE5">✅</div></div>
+        <div class="stat-card-top"><div class="stat-icon" style="background:#D1FAE5"><x-icon name="check" /></div></div>
         <div class="stat-num">{{ $passing }}</div>
         <div class="stat-label">Passing (≥80%)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-top"><div class="stat-icon" style="background:#FEF3C7">📋</div></div>
+        <div class="stat-card-top"><div class="stat-icon" style="background:#FEF3C7"><x-icon name="clipboard" /></div></div>
         <div class="stat-num">{{ $allSessions->count() }}</div>
         <div class="stat-label">Total Sessions</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-top"><div class="stat-icon" style="background:#EDE9FE">📈</div></div>
+        <div class="stat-card-top"><div class="stat-icon" style="background:#EDE9FE"><x-icon name="trending-up" /></div></div>
         <div class="stat-num">{{ $avgAccuracy > 0 ? round($avgAccuracy) . '%' : '—' }}</div>
         <div class="stat-label">Avg Accuracy</div>
       </div>
@@ -124,7 +124,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
       <div class="two-col">
         <div class="panel">
           <div class="panel-head">
-            <div class="panel-title"><div class="p-icon" style="background:#DBEAFE">📈</div>Score Distribution</div>
+            <div class="panel-title"><div class="p-icon" style="background:#DBEAFE"><x-icon name="trending-up" /></div>Score Distribution</div>
           </div>
           <div class="panel-body">
             <div class="chart-wrap"><canvas id="distChart"></canvas></div>
@@ -132,7 +132,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
         </div>
         <div class="panel">
           <div class="panel-head">
-            <div class="panel-title"><div class="p-icon" style="background:#D1FAE5">🏫</div>Class Avg Accuracy</div>
+            <div class="panel-title"><div class="p-icon" style="background:#D1FAE5"><x-icon name="school" /></div>Class Avg Accuracy</div>
           </div>
           <div class="panel-body" style="padding:.75rem 1.25rem">
             @foreach($classes as $class)
@@ -158,7 +158,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
       <div class="panel" style="margin-bottom:1.25rem">
         <div class="panel-head">
-          <div class="panel-title"><div class="p-icon" style="background:#FEF3C7">📅</div>Sessions Over Time</div>
+          <div class="panel-title"><div class="p-icon" style="background:#FEF3C7"><x-icon name="calendar" /></div>Sessions Over Time</div>
         </div>
         <div class="panel-body">
           <div class="chart-wrap" style="height:200px"><canvas id="timeChart"></canvas></div>
@@ -167,7 +167,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
     @else
       <div class="panel">
         <div class="coming-soon">
-          <div class="cs-icon">📊</div>
+          <div class="cs-icon"><x-icon name="bar-chart" /></div>
           <div class="cs-title">Analytics will appear here</div>
           <div class="cs-sub">Assign passages and complete reading sessions to start seeing data, charts, and class performance insights.</div>
         </div>

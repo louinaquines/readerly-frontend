@@ -130,7 +130,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
     <div class="class-hero">
       <div class="class-hero-left">
-        <div class="class-hero-tag">🏫 Class</div>
+        <div class="class-hero-tag"><x-icon name="school" /> Class</div>
         <div class="class-hero-name">{{ $class['name'] }}</div>
         <div class="class-hero-grade">{{ $class['grade_level'] ?? '' }}</div>
       </div>
@@ -156,7 +156,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
     <div class="filter-bar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><x-icon name="search" /></span>
         <input type="text" class="search-input" id="studentSearch" placeholder="Search students…">
       </div>
       <button class="filter-btn active" data-filter="all">All ({{ $totalCount }})</button>
@@ -209,8 +209,8 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
               <span class="mini-bar-pct" style="color:{{ $scoreColor }}">{{ $score !== null ? $score . '%' : '—' }}</span>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:.72rem;color:var(--gray-500)">📊 {{ $sessions }} session{{ $sessions !== 1 ? 's' : '' }}</div>
-              <div style="font-size:.72rem;color:var(--gray-500)">🏆 Lvl {{ $level }}</div>
+              <div style="font-size:.72rem;color:var(--gray-500);display:flex;align-items:center;gap:.3rem"><x-icon name="bar-chart" /> {{ $sessions }} session{{ $sessions !== 1 ? 's' : '' }}</div>
+              <div style="font-size:.72rem;color:var(--gray-500);display:flex;align-items:center;gap:.3rem"><x-icon name="trophy" /> Lvl {{ $level }}</div>
             </div>
           </div>
           <div class="student-card-footer">
@@ -227,7 +227,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
         </a>
       @empty
         <div class="empty-state">
-          <div class="empty-icon">👥</div>
+          <div class="empty-icon"><x-icon name="users" /></div>
           <div class="empty-title">Wala pang estudyante</div>
           <div class="empty-sub">Walang estudyante sa klase na ito.</div>
         </div>

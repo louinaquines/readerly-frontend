@@ -391,4 +391,101 @@ class TeacherController extends Controller
 
         return back()->withErrors(['name' => $response->json('message') ?? 'Failed to create class.']);
     }
+
+    public function generateSummary(int $classId, int $studentId)
+    {
+        $student  = $this->api()->get("/api/classes/{$classId}/students/{$studentId}")->json();
+        $sessions = $this->api()->get("/api/students/{$studentId}/sessions")->json() ?? [];
+
+        $sessions = array_map(function ($s) {
+            $s['accuracy_score'] = $s['accuracy_score'] ?? $s['score'] ?? null;
+            return $s;
+        }, $sessions);
+
+        $completed = array_filter($sessions, fn($s) => ($s['status'] ?? '') !== 'pending');
+        $scores    = array_filter(array_column($completed, 'accuracy_score'));
+        $avg       = count($scores) ? round(array_sum($scores) / count($scores)) : 0;
+        $latest    = count($scores) ? end($scores) : null;
+        $total     = count($completed);
+
+        // Collect all error patterns
+        $allErrors = [];
+        foreach ($completed as $s) {
+            $patterns = $s['error_patterns'] ?? [];
+            if (is_string($patterns)) $patterns = json_decode($patterns, true) ?? [];
+            foreach ($patterns as $w) $allErrors[] = $w;
+        }
+        $topErrors = array_slice(array_keys(array_count_values($allErrors)), 0, 5);
+
+        // Try Anthropic API
+        try {
+            $apiKey = config('services.anthropic.key');
+
+            if ($apiKey) {
+                $prompt = "You are an educational assistant helping a Filipino elementary school teacher understand a student's reading progress.
+
+        Student: {$student['name']}
+        Grade: {$student['grade']}
+        Reading Level: {$student['reading_level']}
+        Total Sessions Completed: {$total}
+        Average Accuracy: {$avg}%
+        Latest Score: " . ($latest ?? 'N/A') . "%
+        Most Missed Words: " . (count($topErrors) ? implode(', ', $topErrors) : 'none recorded') . "
+
+        Write a concise 3-sentence progress summary for the teacher. Be encouraging but honest. Mention specific patterns if errors exist. End with one actionable recommendation.";
+
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'x-api-key'         => $apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'content-type'      => 'application/json',
+                ])->post('https://api.anthropic.com/v1/messages', [
+                    'model'      => 'claude-haiku-4-5-20251001',
+                    'max_tokens' => 300,
+                    'messages'   => [
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                ]);
+
+                \Illuminate\Support\Facades\Log::info('Anthropic response', [
+                    'status' => $response->status(),
+                    'body'   => $response->body(),
+                ]);
+
+                if ($response->successful()) {
+                    $content = $response->json('content.0.text');
+                    if ($content) {
+                        return response()->json(['summary' => $content, 'source' => 'ai']);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Anthropic error: ' . $e->getMessage());
+        }
+
+        // Rule-based fallback
+        $trend = '';
+        $scoreList = array_values($scores);
+        if (count($scoreList) >= 2) {
+            $first = $scoreList[0];
+            $last  = end($scoreList);
+            if ($last > $first)       $trend = "Performance is trending upward.";
+            elseif ($last < $first)   $trend = "Performance has declined recently — additional support may be needed.";
+            else                      $trend = "Performance has been consistent.";
+        }
+
+        $errorNote = count($topErrors)
+            ? "Most frequently missed words include: " . implode(', ', $topErrors) . "."
+            : "No significant error patterns recorded yet.";
+
+        $recommendation = $avg >= 80
+            ? "Recommend advancing to more challenging passages."
+            : ($avg >= 60
+                ? "Recommend continued practice with current level passages focusing on missed words."
+                : "Recommend remedial reading sessions and one-on-one support.");
+
+        $summary = "{$student['name']} has completed {$total} reading " . ($total === 1 ? "session" : "sessions") .
+            " with an average accuracy of {$avg}%. {$trend} {$errorNote} {$recommendation}";
+
+        return response()->json(['summary' => $summary, 'source' => 'fallback']);
+    }
 }

@@ -115,7 +115,6 @@
 .score-card.high{background:linear-gradient(135deg,#D1FAE5,#ECFDF5);border:2px solid rgba(5,150,105,.2)}
 .score-card.mid{background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:2px solid rgba(245,158,11,.2)}
 .score-card.low{background:linear-gradient(135deg,#FEE2E2,#FEF2F2);border:2px solid rgba(220,38,38,.2)}
-
 .score-emoji{font-size:3rem;margin-bottom:.5rem;display:block}
 .score-circle{
   width:100px;height:100px;border-radius:50%;
@@ -126,7 +125,6 @@
 .score-card.high .score-circle{background:rgba(5,150,105,.12);color:#059669}
 .score-card.mid  .score-circle{background:rgba(245,158,11,.12);color:#D97706}
 .score-card.low  .score-circle{background:rgba(220,38,38,.12);color:#DC2626}
-
 .score-label{font-size:.8rem;color:#6B7280;font-family:'DM Sans',sans-serif;margin-bottom:.5rem}
 .score-message{
   font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:700;
@@ -135,21 +133,49 @@
 .score-card.high .score-message{color:#065F46}
 .score-card.mid  .score-message{color:#92400E}
 .score-card.low  .score-message{color:#991B1B}
-
 .score-divider{height:1px;background:rgba(0,0,0,.06);margin:.85rem 0}
-
 .missed-label{font-size:.72rem;font-weight:600;color:#6B7280;margin-bottom:.5rem;font-family:'DM Sans',sans-serif}
 .missed-words{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:.5rem}
 .missed-word{
   font-size:.75rem;font-weight:700;padding:.22rem .65rem;border-radius:50px;
   background:rgba(220,38,38,.1);color:#991B1B;font-family:'DM Sans',sans-serif
 }
-
-/* ── STATS ROW ── */
 .score-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem}
 .score-stat{background:rgba(255,255,255,.6);border-radius:12px;padding:.75rem .5rem;text-align:center}
 .ss-num{font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:#374151;line-height:1}
 .ss-lbl{font-size:.65rem;color:#9CA3AF;margin-top:.15rem;font-weight:500}
+
+/* ── AI FEEDBACK ── */
+.ai-feedback{
+  background:linear-gradient(135deg,#EDE9FE,#F5F3FF);
+  border:1.5px solid rgba(124,58,237,.2);
+  border-radius:16px;padding:1.1rem 1.25rem;
+  margin-bottom:1.25rem;text-align:left
+}
+.ai-feedback-header{
+  display:flex;align-items:center;gap:.5rem;
+  margin-bottom:.65rem
+}
+.ai-feedback-icon{
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(124,58,237,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;flex-shrink:0
+}
+.ai-feedback-title{
+  font-family:'Baloo 2',cursive;font-size:.88rem;
+  font-weight:700;color:#5B21B6
+}
+.ai-feedback-text{
+  font-size:.82rem;color:#4C1D95;line-height:1.7;
+  font-family:'DM Sans',sans-serif;margin-bottom:.75rem
+}
+.practice-words{display:flex;flex-wrap:wrap;gap:.4rem}
+.practice-word{
+  font-size:.75rem;font-weight:700;padding:.22rem .65rem;
+  border-radius:50px;background:rgba(124,58,237,.12);
+  color:#5B21B6;font-family:'DM Sans',sans-serif
+}
 
 /* ── DONE ACTIONS ── */
 .done-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;margin-top:1rem}
@@ -164,10 +190,7 @@
   box-shadow:0 4px 14px rgba(249,115,22,.3)
 }
 .done-btn-home:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.4)}
-.done-btn-retry{
-  background:#EFF6FF;color:#1E40AF;
-  border:1.5px solid rgba(59,130,246,.25)
-}
+.done-btn-retry{background:#EFF6FF;color:#1E40AF;border:1.5px solid rgba(59,130,246,.25)}
 .done-btn-retry:hover{background:#1E40AF;color:#fff}
 
 /* ── SUBMITTING ── */
@@ -203,6 +226,91 @@
       $totalWords  = count(explode(' ', trim($passage)));
       $missedCount = count($errorPatterns);
       $readCount   = max(0, $totalWords - $missedCount);
+
+      // ── SMART RULE-BASED FEEDBACK ──
+      $feedbackMsg    = '';
+      $practiceWords  = [];
+
+      if ($missedCount === 0) {
+          $feedbackMsg = 'Perfect reading! You read every word correctly. Try a longer or more challenging passage next time!';
+      } else {
+          // Analyse phonetic patterns in missed words
+          $patterns = [];
+          foreach ($errorPatterns as $word) {
+              $w = strtolower($word);
+              // Short vowel sounds
+              if (preg_match('/^[bcdfghjklmnpqrstvwxyz]at$/', $w))      $patterns['short-at'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]it$/', $w))  $patterns['short-it'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]et$/', $w))  $patterns['short-et'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]ot$/', $w))  $patterns['short-ot'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]ut$/', $w))  $patterns['short-ut'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]an$/', $w))  $patterns['short-an'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]in$/', $w))  $patterns['short-in'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]ig$/', $w))  $patterns['short-ig'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]og$/', $w))  $patterns['short-og'][]  = $w;
+              elseif (preg_match('/^[bcdfghjklmnpqrstvwxyz]ag$/', $w))  $patterns['short-ag'][]  = $w;
+              // Blends
+              elseif (preg_match('/^(th|sh|ch|wh)/', $w))               $patterns['digraph'][]   = $w;
+              elseif (preg_match('/^(bl|br|cl|cr|dr|fl|fr|gl|gr|pl|pr|sl|sm|sn|sp|st|sw|tr)/', $w)) $patterns['blend'][] = $w;
+              // Long words
+              elseif (strlen($w) > 6)                                    $patterns['long'][]      = $w;
+              // Default
+              else                                                        $patterns['general'][]   = $w;
+          }
+
+          // Practice word suggestions by pattern
+          $suggestions = [
+              'short-at' => ['cat','bat','hat','rat','sat','fat','mat','pat'],
+              'short-it' => ['bit','hit','sit','kit','lit','pit','fit','wit'],
+              'short-et' => ['bet','get','jet','let','met','net','pet','set'],
+              'short-ot' => ['bot','dot','got','hot','lot','not','pot','top'],
+              'short-ut' => ['but','cut','gut','hut','nut','put','rut','tub'],
+              'short-an' => ['ban','can','fan','man','pan','ran','tan','van'],
+              'short-in' => ['bin','din','fin','kin','pin','sin','tin','win'],
+              'short-ig' => ['big','dig','fig','jig','pig','rig','wig','zig'],
+              'short-og' => ['bog','cog','dog','fog','hog','jog','log','tog'],
+              'short-ag' => ['bag','gag','lag','nag','rag','sag','tag','wag'],
+              'digraph'  => ['the','that','this','them','then','shop','chip','when'],
+              'blend'    => ['blue','flag','frog','plan','stop','swim','tree','drip'],
+              'long'     => [],
+              'general'  => [],
+          ];
+
+          // Find dominant pattern
+          $dominantPattern = null;
+          $maxCount = 0;
+          foreach ($patterns as $key => $words) {
+              if (count($words) > $maxCount) {
+                  $maxCount        = count($words);
+                  $dominantPattern = $key;
+              }
+          }
+
+          if ($dominantPattern === 'digraph') {
+              $feedbackMsg   = 'You had trouble with digraphs — letter pairs like "th", "sh", "ch", and "wh" that make a single sound. Practice saying these slowly before reading them in sentences.';
+              $practiceWords = $suggestions['digraph'];
+          } elseif ($dominantPattern === 'blend') {
+              $feedbackMsg   = 'You struggled with consonant blends at the start of words. Try sounding out each letter separately first, then blend them together smoothly.';
+              $practiceWords = $suggestions['blend'];
+          } elseif ($dominantPattern === 'long') {
+              $feedbackMsg   = 'You had difficulty with longer words. Try breaking them into syllables — read one part at a time, then put them together.';
+              $practiceWords = array_slice($errorPatterns, 0, 6);
+          } elseif (str_starts_with($dominantPattern ?? '', 'short-')) {
+              $ending = substr($dominantPattern, 6);
+              $feedbackMsg   = "You struggled with words ending in \"-{$ending}\". These words all share the same sound. Practice the list below to build confidence!";
+              $practiceWords = array_slice($suggestions[$dominantPattern] ?? [], 0, 6);
+          } else {
+              // Generic feedback based on score
+              if ($missedCount === 1) {
+                  $feedbackMsg = "You missed just 1 word — great job! Focus on \"" . ($errorPatterns[0] ?? '') . "\" and try reading it in a sentence.";
+              } elseif ($missedCount <= 3) {
+                  $feedbackMsg = "You missed " . $missedCount . " words. Review each missed word carefully, sound it out slowly, then try reading the full passage again.";
+              } else {
+                  $feedbackMsg = "You missed several words in this passage. Try reading it again slowly, one word at a time. It\'s okay to pause and sound out difficult words!";
+              }
+              $practiceWords = array_slice($errorPatterns, 0, 6);
+          }
+      }
     @endphp
 
     <div class="score-card {{ $tier }}">
@@ -236,6 +344,27 @@
         </div>
       @endif
     </div>
+
+    {{-- AI FEEDBACK PANEL --}}
+    @if($feedbackMsg)
+      <div class="ai-feedback">
+        <div class="ai-feedback-header">
+          <div class="ai-feedback-icon">💡</div>
+          <div class="ai-feedback-title">Reading Coach Feedback</div>
+        </div>
+        <div class="ai-feedback-text">{{ $feedbackMsg }}</div>
+        @if(count($practiceWords) > 0)
+          <div style="font-size:.7rem;font-weight:600;color:#5B21B6;margin-bottom:.4rem;font-family:'DM Sans',sans-serif">
+            Try practicing these words:
+          </div>
+          <div class="practice-words">
+            @foreach($practiceWords as $pw)
+              <span class="practice-word">{{ $pw }}</span>
+            @endforeach
+          </div>
+        @endif
+      </div>
+    @endif
 
     @if($transcript)
       <div class="transcript-box">

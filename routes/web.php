@@ -28,6 +28,7 @@ Route::middleware('api.auth:teacher')->group(function () {
     Route::get('/teacher/analytics', [TeacherController::class, 'analytics'])->name('teacher.analytics');
     Route::get('/teacher/notifications', [TeacherController::class, 'notifications'])->name('teacher.notifications');
     Route::post('/teacher/classes/store', [TeacherController::class, 'storeClass'])->name('teacher.classes.store');
+    Route::get('/teacher/class/{classId}/student/{studentId}/summary', [TeacherController::class, 'generateSummary'])->name('teacher.summary');
 });
 
 // Teacher profile — inside auth group

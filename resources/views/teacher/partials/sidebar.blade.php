@@ -75,23 +75,23 @@
         <div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px;padding:.5rem .75rem;margin-bottom:.25rem">MAIN</div>
 
         <a href="{{ route('teacher.dashboard') }}" style="display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s;margin-bottom:.2rem;{{ request()->routeIs('teacher.dashboard') ? 'background:rgba(255,255,255,.12);color:#fff;' : '' }}">
-            🏠 <span>Dashboard</span>
+            <x-icon name="home" /> <span>Dashboard</span>
         </a>
 
         <div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px;padding:.5rem .75rem;margin-bottom:.25rem">CLASSES</div>
 
         <a href="{{ route('teacher.classes') }}" style="display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s;margin-bottom:.2rem;{{ request()->routeIs('teacher.classes') ? 'background:rgba(255,255,255,.12);color:#fff;' : '' }}">
-            🏫 <span>My Classes</span>
+            <x-icon name="school" /> <span>My Classes</span>
         </a>
 
         <div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px;padding:.5rem .75rem;margin-bottom:.25rem">REPORTS</div>
 
         <a href="{{ route('teacher.reports') }}" style="display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s;margin-bottom:.2rem;{{ request()->routeIs('teacher.reports') ? 'background:rgba(255,255,255,.12);color:#fff;' : '' }}">
-            📄 <span>PDF Reports</span>
+            <x-icon name="file-text" /> <span>PDF Reports</span>
         </a>
 
         <a href="{{ route('teacher.analytics') }}" style="display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s;margin-bottom:.2rem;{{ request()->routeIs('teacher.analytics') ? 'background:rgba(255,255,255,.12);color:#fff;' : '' }}">
-            📊 <span>Analytics</span>
+            <x-icon name="bar-chart" /> <span>Analytics</span>
         </a>
     </nav>
 

@@ -48,6 +48,10 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
 .card{background:#fff;border-radius:16px;border:1.5px solid var(--gray-200);padding:1.5rem;margin-bottom:1.5rem}
 .card:last-child{margin-bottom:0}
 .card-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+
+.card2{background:#fff;border-radius:16px;border:1.5px solid var(--gray-200);padding:1.5rem;margin-bottom:1.5rem}
+.card2:last-child{margin-bottom:0}
+.card2-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
 .ct-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem}
 
 .form-group{margin-bottom:1rem}
@@ -105,7 +109,7 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
 
   <div class="page">
     @if(session('success'))
-      <div class="alert-success">✓ {{ session('success') }}</div>
+      <div class="alert-success"><x-icon name="check" /> {{ session('success') }}</div>
     @endif
     @if($errors->any())
       <div class="alert-error">{{ $errors->first() }}</div>
@@ -125,12 +129,12 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
             </svg>
           @endif
         </div>
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.5);color:#fff;padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none" id="uploadHint">📸 Upload</div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.5);color:#fff;padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none" id="uploadHint"><x-icon name="camera" /> Upload</div>
         <div class="avatar-change-hint">Click to change</div>
       </div>
       <div class="profile-hero-info">
         <div class="profile-hero-name">{{ $user['name'] }}</div>
-        <div class="profile-hero-role">✓ Verified Educator</div>
+        <div class="profile-hero-role"><x-icon name="check" /> Verified Educator</div>
         <div class="profile-hero-joined">Member since {{ \Carbon\Carbon::parse($user['created_at'])->format('F Y') }}</div>
         <div class="profile-hero-stats">
           <div class="hero-stat"><div class="hs-num">{{ count($classes) }}</div><div class="hs-lbl">Classes</div></div>
@@ -143,7 +147,7 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
     <div class="profile-grid">
       <div>
         <div class="card">
-          <div class="card-title"><div class="ct-icon" style="background:var(--blue-light)">👤</div> Account Details</div>
+          <div class="card-title"><div class="ct-icon" style="background:var(--blue-light)"><x-icon name="user" /></div> Account Details</div>
           <form method="POST" action="{{ route('teacher.profile.update') }}">
             @csrf
             <input type="hidden" name="avatar" value="{{ $user['avatar'] ?? '' }}">
@@ -154,9 +158,11 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
             <button type="submit" class="btn btn-primary">Update Profile</button>
           </form>
         </div>
+      </div>
 
-        <div class="card">
-          <div class="card-title"><div class="ct-icon" style="background:#FEF2F2">🔒</div> Security Settings</div>
+      <div>
+        <div class="card2">
+          <div class="card-title"><div class="ct-icon" style="background:#FEF2F2"><x-icon name="lock" /></div> Security Settings</div>
           <form method="POST" action="{{ route('teacher.profile.password') }}">
             @csrf
             <div class="form-group"><label>Current Password</label><input type="password" name="current_password" placeholder="Enter current password" required></div>
@@ -168,51 +174,8 @@ body{font-family:var(--font-body);background:var(--gray-50);min-height:100vh;col
           <div>
             <div style="font-size:.82rem;font-weight:600;color:var(--red);margin-bottom:.5rem">Danger Zone</div>
             <p style="font-size:.78rem;color:var(--gray-500);margin-bottom:.75rem">Permanently delete your account and all associated data. This cannot be undone.</p>
-            <button class="btn btn-danger" onclick="confirmDelete()">🗑 Delete Account</button>
+            <button class="btn btn-danger" onclick="confirmDelete()"><x-icon name="trash" /> Delete Account</button>
           </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-title"><div class="ct-icon" style="background:var(--green-light)">🛡️</div> System Permissions</div>
-          <div style="display:flex;flex-wrap:wrap;gap:.5rem">
-            <span class="tag tag-blue">✓ Verified Educator</span>
-            <span class="tag tag-green">✓ Class Management</span>
-            <span class="tag tag-green">✓ Assign Passages</span>
-            <span class="tag tag-green">✓ Export Reports</span>
-            <span class="tag tag-blue">✓ AI Story Generator</span>
-          </div>
-          <div class="divider"></div>
-          <div style="font-size:.8rem;color:var(--gray-500)">
-            <div style="display:flex;justify-content:space-between;margin-bottom:.35rem">
-              <span>AI Story Generations this month</span>
-              <span style="font-weight:700;color:var(--blue)">∞ Unlimited</span>
-            </div>
-            <div style="display:flex;justify-content:space-between">
-              <span>JWT Role</span>
-              <span style="font-weight:700;color:var(--gray-700)">teacher</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title"><div class="ct-icon" style="background:var(--blue-light)">🏫</div> Handled Classes</div>
-          <div class="stat-row">
-            <div class="mini-stat"><div class="ms-num">{{ $totalStudents }}</div><div class="ms-lbl">Total Students</div></div>
-            <div class="mini-stat"><div class="ms-num" style="color:var(--red)">{{ $atRisk }}</div><div class="ms-lbl">At Risk (&lt;60%)</div></div>
-          </div>
-          @forelse($classes as $class)
-            <div class="class-item">
-              <div class="class-item-left">
-                <div class="ci-name">{{ $class['name'] }}</div>
-                <div class="ci-grade">{{ $class['grade_level'] ?? '' }}</div>
-              </div>
-              <span class="ci-count">{{ count($class['students'] ?? []) }} students</span>
-            </div>
-          @empty
-            <p style="font-size:.83rem;color:var(--gray-400)">No classes yet.</p>
-          @endforelse
         </div>
       </div>
     </div>

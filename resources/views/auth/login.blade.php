@@ -206,14 +206,14 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   <div class="auth-left">
     <div class="dots"></div>
     <div class="left-content">
-      <a href="/" class="left-logo">Readerly<span class="logo-pill">PH</span></a>
+      <a href="/" class="left-logo">Readerly</a>
       <div class="left-headline">Welcome <span>back</span> to your classroom!</div>
       <div class="left-sub">Track reading progress, assign passages, and watch every student improve — one session at a time.</div>
       <div class="left-features">
         <div class="feat-item"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="feat-text">Voice-based reading assessment</div></div>
         <div class="feat-item"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg></div><div class="feat-text">Real-time accuracy tracking</div></div>
-        <div class="feat-item"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/><circle cx="16" cy="16" r="2"/></svg></div><div class="feat-text">AI-generated remedial stories</div></div>
-        <div class="feat-item"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="feat-text">Instant teacher alerts via WebSocket</div></div>
+        <div class="feat-item"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/><circle cx="16" cy="16" r="2"/></svg></div><div class="feat-text">AI-generated Report Summary</div></div>
+        <div class="feat-item"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="feat-text">Instant teacher alerts</div></div>
       </div>
       <div class="left-card">
         <div class="left-card-top">
@@ -277,11 +277,11 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
         <button type="submit" class="submit-btn">Sign In →</button>
       </form>
 
-      <div class="divider"><span>or continue as</span></div>
+      <!-- <div class="divider"><span>or continue as</span></div>
       <div class="role-btns">
         <a href="{{ route('login') }}" class="role-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg> Teacher</a>
         <a href="{{ route('login') }}" class="role-btn student"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Student</a>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

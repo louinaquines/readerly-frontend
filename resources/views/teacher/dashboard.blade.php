@@ -168,7 +168,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-card-top">
-          <div class="stat-icon-wrap" style="background:#DBEAFE">👥</div>
+          <div class="stat-icon-wrap" style="background:#DBEAFE"><x-icon name="users" /></div>
           <span class="stat-trend trend-up">Active</span>
         </div>
         <div class="stat-num">{{ $totalStudents }}</div>
@@ -176,7 +176,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
       </div>
       <div class="stat-card">
         <div class="stat-card-top">
-          <div class="stat-icon-wrap" style="background:#D1FAE5">🏫</div>
+          <div class="stat-icon-wrap" style="background:#D1FAE5"><x-icon name="school" /></div>
           <span class="stat-trend trend-neutral">Classes</span>
         </div>
         <div class="stat-num">{{ $totalClasses }}</div>
@@ -184,7 +184,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
       </div>
       <div class="stat-card">
         <div class="stat-card-top">
-          <div class="stat-icon-wrap" style="background:#FEF3C7">⚡</div>
+          <div class="stat-icon-wrap" style="background:#FEF3C7"><x-icon name="zap" /></div>
           @if($pendingAlert > 0)
             <span class="stat-trend" style="background:#FEE2E2;color:#991B1B">{{ $pendingAlert }} new</span>
           @else
@@ -196,8 +196,8 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
       </div>
       <div class="stat-card">
         <div class="stat-card-top">
-          <div class="stat-icon-wrap" style="background:#EDE9FE">📈</div>
-          <span class="stat-trend trend-up">↑</span>
+          <div class="stat-icon-wrap" style="background:#EDE9FE"><x-icon name="trending-up" /></div>
+          <span class="stat-trend trend-up"><x-icon name="arrow-up" /></span>
         </div>
         <div class="stat-num">{{ $avgAccuracy > 0 ? round($avgAccuracy) . '%' : '—' }}</div>
         <div class="stat-label">Avg Accuracy</div>
@@ -208,7 +208,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
       <div class="panel">
         <div class="panel-head">
           <div class="panel-title">
-            <div class="p-icon" style="background:#DBEAFE">👥</div>
+            <div class="p-icon" style="background:#DBEAFE"><x-icon name="users" /></div>
             Student Status
           </div>
           <a href="{{ route('teacher.classes') }}" class="panel-link">View all →</a>
@@ -244,7 +244,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
                 </div>
                 <div class="student-actions">
                   @if(isset($student['class_id']))
-                    <a href="{{ route('teacher.student', [$student['class_id'], $student['id']]) }}" class="action-btn" title="View">👁</a>
+                    <a href="{{ route('teacher.student', [$student['class_id'], $student['id']]) }}" class="action-btn" title="View"><x-icon name="eye" /></a>
                   @endif
                 </div>
               </li>
@@ -260,7 +260,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
       <div class="panel">
         <div class="panel-head">
           <div class="panel-title">
-            <div class="p-icon" style="background:#FEF3C7">⚡</div>
+            <div class="p-icon" style="background:#FEF3C7"><x-icon name="zap" /></div>
             Live Alerts
           </div>
           @if($pendingAlert > 0)
@@ -301,7 +301,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
     <div class="panel" style="margin-bottom:1.75rem">
       <div class="panel-head">
         <div class="panel-title">
-          <div class="p-icon" style="background:#D1FAE5">🏫</div>
+          <div class="p-icon" style="background:#D1FAE5"><x-icon name="school" /></div>
           My Classes
         </div>
         <a href="{{ route('teacher.classes') }}" class="panel-link">View all →</a>
@@ -317,7 +317,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
             $classBg     = $classColors[crc32($class['name']) % count($classColors)];
           @endphp
           <a href="{{ route('teacher.class', $class['id']) }}" class="class-card">
-            <div class="class-card-icon" style="background:{{ $classBg }}22;color:{{ $classBg }}">🏫</div>
+            <div class="class-card-icon" style="background:{{ $classBg }}22;color:{{ $classBg }}"><x-icon name="school" /></div>
             <div class="class-card-name">{{ $class['name'] }}</div>
             <div class="class-card-meta">{{ $students->count() }} students</div>
             <div class="class-card-footer">
@@ -338,7 +338,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
     <div class="panel">
       <div class="panel-head">
         <div class="panel-title">
-          <div class="p-icon" style="background:#EDE9FE">📋</div>
+          <div class="p-icon" style="background:#EDE9FE"><x-icon name="clipboard" /></div>
           Recent Sessions
         </div>
       </div>
@@ -378,7 +378,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
                   @if($st === 'completed' && isset($session['student_id'], $session['class_id']))
                     <form method="POST" action="{{ route('teacher.approve', [$session['student_id'], $session['id']]) }}" style="display:inline">
                       @csrf
-                      <button class="approve-btn" type="submit">✓ Approve</button>
+                      <button class="approve-btn" type="submit"><x-icon name="check" /> Approve</button>
                     </form>
                   @elseif(isset($session['student_id'], $session['class_id']))
                     <a href="{{ route('teacher.student', [$session['class_id'], $session['student_id']]) }}" class="approve-btn" style="background:var(--blue-50);color:var(--blue);border-color:rgba(30,64,175,.15)">View</a>

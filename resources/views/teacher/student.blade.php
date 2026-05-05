@@ -131,7 +131,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
     </div>
     <div class="topbar-actions">
       <a href="{{ route('teacher.export', [$classId, $student['id']]) }}" class="export-btn">
-        📄 <span>Export PDF</span>
+        <x-icon name="file-text" /> <span>Export PDF</span>
       </a>
     </div>
   </div>
@@ -193,7 +193,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title"><div class="p-icon" style="background:#EDE9FE">📈</div> Accuracy Trend</div>
+          <div class="panel-title"><div class="p-icon" style="background:#EDE9FE"><x-icon name="trending-up" /></div> Accuracy Trend</div>
         </div>
         @if(count($allScores) > 0)
           <div class="chart-wrap">
@@ -201,7 +201,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
           </div>
         @else
           <div class="empty-small">
-            <div class="e-icon">📊</div>
+            <div class="e-icon"><x-icon name="bar-chart" /></div>
             No scores yet. Chart will appear after the first session.
           </div>
         @endif
@@ -209,11 +209,11 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title"><div class="p-icon" style="background:#DBEAFE">📝</div> Assign Passage</div>
+          <div class="panel-title"><div class="p-icon" style="background:#DBEAFE"><x-icon name="pencil" /></div> Assign Passage</div>
         </div>
         <div class="panel-body">
           @if(session('success'))
-            <div class="flash-success">✓ {{ session('success') }}</div>
+            <div class="flash-success"><x-icon name="check" /> {{ session('success') }}</div>
           @endif
           @if(session('error'))
             <div class="flash-error">{{ session('error') }}</div>
@@ -227,7 +227,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
               placeholder="Type or paste the reading passage here for the student…"
               required
             ></textarea>
-            <button type="submit" class="assign-btn">📋 Assign Passage</button>
+            <button type="submit" class="assign-btn"><x-icon name="clipboard" /> Assign Passage</button>
           </form>
         </div>
       </div>
@@ -238,12 +238,12 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title"><div class="p-icon" style="background:#D1FAE5">🎤</div> Reading Sessions</div>
+          <div class="panel-title"><div class="p-icon" style="background:#D1FAE5"><x-icon name="mic" /></div> Reading Sessions</div>
           <span style="font-size:.75rem;color:var(--gray-400)">{{ $totalSess }} total</span>
         </div>
         <div class="panel-body" style="padding:.75rem 1.25rem;max-height:520px;overflow-y:auto">
           @if(session('approve_success'))
-            <div class="flash-success">✓ {{ session('approve_success') }}</div>
+            <div class="flash-success"><x-icon name="check" /> {{ session('approve_success') }}</div>
           @endif
           @if(session('approve_error'))
             <div class="flash-error">{{ session('approve_error') }}</div>
@@ -289,13 +289,13 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
               @if(($session['status'] ?? '') === 'completed')
                 <form method="POST" action="{{ route('teacher.approve', [$student['id'], $session['id']]) }}">
                   @csrf
-                  <button type="submit" class="approve-form-btn">⬆ Approve Level Up</button>
+                  <button type="submit" class="approve-form-btn"><x-icon name="arrow-up" /> Approve Level Up</button>
                 </form>
               @endif
             </div>
           @empty
             <div class="empty-small">
-              <div class="e-icon">🎤</div>
+              <div class="e-icon"><x-icon name="mic" /></div>
               Wala pang sessions. Mag-assign ng passage para magsimula.
             </div>
           @endforelse
@@ -304,35 +304,40 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title"><div class="p-icon" style="background:var(--purple-light)">🤖</div> AI Generated Stories</div>
-          <span style="font-size:.75rem;color:var(--gray-400)">{{ count($stories) }} stories</span>
+          <div class="panel-title">
+            <div class="p-icon" style="background:var(--purple-light)"><x-icon name="brain" /></div>
+            AI Progress Summary
+          </div>
+          <button onclick="generateSummary()" id="summaryBtn"
+            style="display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .9rem;background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border:none;border-radius:50px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:var(--font-body);transition:all .2s">
+            <x-icon name="sparkles" /> Generate
+          </button>
         </div>
-        <div class="panel-body" style="padding:.75rem 1.25rem;max-height:520px;overflow-y:auto">
-          @forelse($stories as $story)
-            <div class="story-card">
-              <div class="story-card-body">
-                <div class="story-tag-row">
-                  <span class="story-ai-tag">🤖 AI-Generated</span>
-                  @if(isset($story['created_at']))
-                    <span class="story-date">{{ \Carbon\Carbon::parse($story['created_at'])->format('M d, Y') }}</span>
-                  @endif
-                </div>
-                <div class="story-text">{{ $story['story'] }}</div>
-                @if(!empty($story['target_patterns']))
-                  <div class="target-words">
-                    @foreach((array)$story['target_patterns'] as $word)
-                      <span class="target-word">{{ $word }}</span>
-                    @endforeach
-                  </div>
-                @endif
-              </div>
+        <div class="panel-body" style="padding:.75rem 1.25rem">
+
+          <div id="summaryLoading" style="display:none;text-align:center;padding:1.5rem">
+            <div style="width:36px;height:36px;border:3px solid var(--gray-200);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto .75rem"></div>
+            <div style="font-size:.82rem;color:var(--gray-500)">Analyzing student data…</div>
+          </div>
+
+          <div id="summaryContent" style="display:none">
+            <div id="summaryText"
+              style="font-size:.88rem;color:var(--gray-700);line-height:1.8;background:var(--gray-50);border-radius:12px;padding:1rem;border:1.5px solid var(--gray-200);margin-bottom:.75rem">
             </div>
-          @empty
-            <div class="empty-small">
-              <div class="e-icon">🤖</div>
-              AI stories will appear here after the student completes their first session.
+            <div id="summarySource"
+              style="font-size:.68rem;color:var(--gray-400);text-align:right">
             </div>
-          @endforelse
+          </div>
+
+          <div id="summaryEmpty" style="text-align:center;padding:1.5rem;color:var(--gray-400)">
+            <div style="font-size:2rem;margin-bottom:.5rem"><x-icon name="brain" /></div>
+            <div style="font-size:.82rem;font-weight:600;color:var(--gray-600);margin-bottom:.25rem">AI Progress Summary</div>
+            <div style="font-size:.78rem;line-height:1.6">Click "Generate" to get an AI-powered analysis of this student's reading progress and personalized recommendations.</div>
+          </div>
+
+          <div id="summaryError" style="display:none;background:var(--red-light);border:1.5px solid rgba(220,38,38,.2);border-radius:10px;padding:.75rem;font-size:.82rem;color:var(--red)">
+          </div>
+
         </div>
       </div>
     </div>
@@ -383,6 +388,54 @@ if (withScores.length > 0 && document.getElementById('accuracyChart')) {
         }
       }
     }
+  });
+}
+const summaryIcons = {
+  clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.125em"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>',
+  sparkles: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.125em"><path d="m12 3 1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"></path><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"></path><path d="m5 4 .8 2.2L8 7l-2.2.8L5 10l-.8-2.2L2 7l2.2-.8z"></path></svg>',
+  barChart: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.125em"><path d="M3 3v18h18"></path><path d="M7 16v-5"></path><path d="M12 16V7"></path><path d="M17 16v-8"></path></svg>'
+};
+function generateSummary() {
+  const btn      = document.getElementById('summaryBtn');
+  const loading  = document.getElementById('summaryLoading');
+  const content  = document.getElementById('summaryContent');
+  const empty    = document.getElementById('summaryEmpty');
+  const error    = document.getElementById('summaryError');
+  const text     = document.getElementById('summaryText');
+  const source   = document.getElementById('summarySource');
+
+  btn.disabled   = true;
+  btn.innerHTML = summaryIcons.clock + ' Generating...';
+  loading.style.display  = 'block';
+  content.style.display  = 'none';
+  empty.style.display    = 'none';
+  error.style.display    = 'none';
+
+  fetch('{{ route("teacher.summary", [$classId, $student["id"]]) }}', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    loading.style.display = 'none';
+    if (data.summary) {
+      text.textContent    = data.summary;
+      source.innerHTML  = data.source === 'ai'
+        ? summaryIcons.sparkles + ' Generated by Claude AI'
+        : summaryIcons.barChart + ' Generated from session data';
+      content.style.display = 'block';
+    } else {
+      throw new Error('No summary returned');
+    }
+  })
+  .catch(err => {
+    loading.style.display = 'none';
+    error.textContent     = 'Could not generate summary. Please try again.';
+    error.style.display   = 'block';
+    empty.style.display   = 'block';
+  })
+  .finally(() => {
+    btn.disabled    = false;
+    btn.innerHTML = summaryIcons.sparkles + ' Generate';
   });
 }
 </script>

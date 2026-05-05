@@ -66,7 +66,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   </div>
 
   <div class="content">
-    <div class="page-title">📄 PDF Reports</div>
+    <div class="page-title" style="display:flex;align-items:center;gap:.5rem"><x-icon name="file-text" /> PDF Reports</div>
 
     <div class="panel">
       <p style="font-size:.88rem;color:var(--gray-500);margin-bottom:1.5rem">
@@ -91,7 +91,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
                     </div>
                   </div>
                   <a href="{{ route('teacher.export', [$class['id'], $student['id']]) }}" class="export-btn">
-                    📄 Export
+                    <x-icon name="file-text" /> Export
                   </a>
                 </div>
               @endforeach
@@ -100,7 +100,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
         </div>
       @empty
         <div style="text-align:center;padding:2.5rem;color:var(--gray-400)">
-          <div style="font-size:2rem;margin-bottom:.75rem">📄</div>
+          <div style="font-size:2rem;margin-bottom:.75rem"><x-icon name="file-text" /></div>
           <div style="font-family:var(--font-display);font-weight:700;color:var(--gray-700);margin-bottom:.35rem">No classes yet</div>
           <div style="font-size:.83rem">Add classes and students to generate PDF reports.</div>
         </div>

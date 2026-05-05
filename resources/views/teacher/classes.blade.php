@@ -126,7 +126,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
     </div>
 
     @if(session('success'))
-      <div class="alert-success">✓ {{ session('success') }}</div>
+      <div class="alert-success"><x-icon name="check" /> {{ session('success') }}</div>
     @endif
     @if($errors->any())
       <div class="alert-error">{{ $errors->first() }}</div>
@@ -146,7 +146,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
         @endphp
         <a href="{{ route('teacher.class', $class['id']) }}" class="class-card">
           <div class="class-card-header">
-            <div class="class-icon" style="background:{{ $classBg }}22;color:{{ $classBg }}">🏫</div>
+            <div class="class-icon" style="background:{{ $classBg }}22;color:{{ $classBg }}"><x-icon name="school" /></div>
             <div class="class-name">{{ $class['name'] }}</div>
             <div class="class-meta">
               <span style="font-weight:600">{{ $totalStudents }} student{{ $totalStudents !== 1 ? 's' : '' }}</span>
@@ -156,39 +156,39 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
             </div>
             <div class="class-id-badge"
                 onclick="event.preventDefault();copyClassId('{{ $class['class_code'] ?? 'N/A' }}', this)">
-              🔑 Class Code: {{ $class['class_code'] ?? 'N/A' }} — tap to copy
+              <x-icon name="key" /> Class Code: {{ $class['class_code'] ?? 'N/A' }} — tap to copy
             </div>
           </div>
           <div class="class-body">
             <div class="class-stats">
               <div class="stat-item stat-green">
-                <div class="stat-icon">✅</div>
+                <div class="stat-icon"><x-icon name="check" /></div>
                 <div class="stat-number">{{ $greenCount }}</div>
                 <div class="stat-label">Passing</div>
               </div>
               <div class="stat-item stat-yellow">
-                <div class="stat-icon">⚠️</div>
+                <div class="stat-icon"><x-icon name="alert-triangle" /></div>
                 <div class="stat-number">{{ $yellowCount }}</div>
                 <div class="stat-label">At Risk</div>
               </div>
               <div class="stat-item stat-red">
-                <div class="stat-icon">❌</div>
+                <div class="stat-icon"><x-icon name="x" /></div>
                 <div class="stat-number">{{ $redCount }}</div>
                 <div class="stat-label">Struggling</div>
               </div>
             </div>
             <div style="font-size:.82rem;color:var(--gray-500);margin-bottom:1rem">
-              📊 Avg accuracy: <span style="font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--gray-900)">{{ round($avgScore) }}%</span>
+              <x-icon name="bar-chart" /> Avg accuracy: <span style="font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--gray-900)">{{ round($avgScore) }}%</span>
             </div>
             <div class="class-footer">
               <div class="class-link">View class details →</div>
-              <span class="view-btn">👁 View Class</span>
+              <span class="view-btn"><x-icon name="eye" /> View Class</span>
             </div>
           </div>
         </a>
       @empty
         <div class="empty-state">
-          <div class="empty-icon">🏫</div>
+          <div class="empty-icon"><x-icon name="school" /></div>
           <div class="empty-title">No Classes Yet</div>
           <div class="empty-subtitle">Create your first class and share the Class ID with your students so they can join.</div>
           <button class="create-btn" onclick="openModal()">＋ Create Your First Class</button>
@@ -201,7 +201,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
 {{-- CREATE CLASS MODAL --}}
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <div class="modal-title">🏫 Create New Class</div>
+    <div class="modal-title"><x-icon name="school" /> Create New Class</div>
     <form method="POST" action="{{ route('teacher.classes.store') }}">
       @csrf
       <div class="form-group">
@@ -225,7 +225,7 @@ body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-900
   </div>
 </div>
 
-<div class="copy-toast" id="copyToast">✓ Class ID copied!</div>
+<div class="copy-toast" id="copyToast"><x-icon name="check" /> Class ID copied!</div>
 
 <script>
 function updateTime() {
@@ -247,12 +247,12 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
 
 function copyClassId(id, el) {
   navigator.clipboard.writeText(String(id)).then(() => {
-    el.textContent = '✓ Copied!';
+    el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.125em"><path d="m20 6-11 11-5-5"></path></svg> Copied!';
     const toast = document.getElementById('copyToast');
     toast.classList.add('show');
     setTimeout(() => {
       toast.classList.remove('show');
-      el.innerHTML = '🔑 Class ID: ' + id + ' — tap to copy';
+      el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.125em"><circle cx="7.5" cy="14.5" r="4.5"></circle><path d="M11 11 21 1"></path><path d="m17 5 2 2"></path><path d="m14 8 2 2"></path></svg> Class ID: ' + id + ' — tap to copy';
     }, 2000);
   });
 }

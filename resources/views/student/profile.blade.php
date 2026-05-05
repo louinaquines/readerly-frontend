@@ -144,7 +144,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       @if(!empty($user['avatar']) && (str_contains($user['avatar'], 'storage') || str_contains($user['avatar'], 'avatars/')))
         <img src="{{ Storage::url($user['avatar']) }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
       @else
-        {{ $user['avatar'] ?? '🦉' }}
+        <x-icon name="user" />
       @endif
     </div>
     <form method="POST" action="{{ route('logout') }}">
@@ -157,7 +157,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 <div class="page">
 
   @if(session('success'))
-    <div class="alert-success">✓ {{ session('success') }}</div>
+    <div class="alert-success"><x-icon name="check" /> {{ session('success') }}</div>
   @endif
   @if($errors->any())
     <div class="alert-error">{{ $errors->first() }}</div>
@@ -182,7 +182,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         @if(!empty($user['avatar']) && (str_contains($user['avatar'], 'storage') || str_contains($user['avatar'], 'avatars/')))
           <img src="{{ Storage::url($user['avatar']) }}" alt="Profile" style="width:100%;height:100%;object-fit:cover">
         @else
-          <span>{{ $user['avatar'] ?? '🦉' }}</span>
+          <span><x-icon name="user" /></span>
         @endif
         <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff">
           <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -216,7 +216,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 
   {{-- READING LEVEL --}}
   <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:var(--yellow-light)">🏆</div> Reading Level</div>
+    <div class="card-title"><div class="ct-icon" style="background:var(--yellow-light)"><x-icon name="trophy" /></div> Reading Level</div>
     @php $progress = $totalRead > 0 ? min(100, ($totalRead % 3) / 3 * 100) : 0; @endphp
     <div class="level-display">
       <div class="level-circle" style="background:{{ $levelColors[$readingLevel] ?? '#F97316' }}">{{ $readingLevel }}</div>
@@ -231,30 +231,9 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     </div>
   </div>
 
-  {{-- SOUND MASTERY --}}
-  <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:var(--purple-light)">🔊</div> Sound Mastery</div>
-    @php
-      $allErrors = $allSess->pluck('error_patterns')->flatten()->filter()->countBy()->sortDesc();
-      $sounds = ['Ma/Me/Mi' => 'ma', 'Ng/Mga' => 'ng', 'Ba/Be/Bi' => 'ba', 'Pa/Pe/Pi' => 'pa', 'Sa/Se/Si' => 'sa', 'La/Le/Li' => 'la'];
-    @endphp
-    @if($allSess->count() === 0)
-      <p style="font-size:.83rem;color:var(--gray-400)">Start reading sessions to see your mastery progress!</p>
-    @else
-      @foreach($sounds as $label => $key)
-        @php $errCount = $allErrors->get($key, 0); $pct = max(0, 100 - ($errCount * 15)); @endphp
-        <div class="mastery-item">
-          <div class="mastery-sound">{{ $label }}</div>
-          <div class="mastery-bar-wrap"><div class="mastery-bar" style="width:{{ $pct }}%"></div></div>
-          <div class="mastery-pct">{{ $pct }}%</div>
-        </div>
-      @endforeach
-    @endif
-  </div>
-
   {{-- WEEKLY STREAK --}}
   <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:#FEF3C7">🔥</div> Weekly Streak</div>
+    <div class="card-title"><div class="ct-icon" style="background:#FEF3C7"><x-icon name="flame" /></div> Weekly Streak</div>
     @php
       $days = ['M','T','W','T','F','S','S'];
       $sessionDays = $allSess->pluck('created_at')
@@ -267,19 +246,19 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         <div class="streak-day {{ in_array($i, $sessionDays) ? 'active' : 'inactive' }}">{{ $day }}</div>
       @endforeach
     </div>
-    <p style="font-size:.78rem;color:var(--gray-500)">Keep reading every day to build your streak! 💪</p>
+    <p style="font-size:.78rem;color:var(--gray-500)">Keep reading every day to build your streak! <x-icon name="zap" /></p>
   </div>
 
   {{-- NEXT GOAL --}}
   <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:var(--purple-light)">🎯</div> Next Goal</div>
+    <div class="card-title"><div class="ct-icon" style="background:var(--purple-light)"><x-icon name="target" /></div> Next Goal</div>
     @php
       $nextLevel = $readingLevel + 1;
       $nextLevelName = $levelNames[$nextLevel] ?? 'Master';
       $sessionsLeft = 3 - ($totalRead % 3);
     @endphp
     <div class="goal-card">
-      <div class="goal-icon">⬆️</div>
+      <div class="goal-icon"><x-icon name="arrow-up" /></div>
       <div>
         <div class="goal-title">Level {{ $nextLevel }} — {{ $nextLevelName }}</div>
         <div class="goal-desc">{{ $sessionsLeft }} more passing {{ $sessionsLeft === 1 ? 'session' : 'sessions' }} needed to level up!</div>
@@ -289,7 +268,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 
   {{-- ACCOUNT DETAILS --}}
   <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:var(--blue-light)">👤</div> Account Details</div>
+    <div class="card-title"><div class="ct-icon" style="background:var(--blue-light)"><x-icon name="user" /></div> Account Details</div>
     <form method="POST" action="{{ route('student.profile.update') }}">
       @csrf
       <div class="form-group"><label>Full Name</label><input type="text" name="name" value="{{ $user['name'] }}" required></div>
@@ -308,7 +287,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
 
   {{-- SECURITY --}}
   <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:#FEF2F2">🔒</div> Security</div>
+    <div class="card-title"><div class="ct-icon" style="background:#FEF2F2"><x-icon name="lock" /></div> Security</div>
     <form method="POST" action="{{ route('student.profile.password') }}">
       @csrf
       <div class="form-group"><label>Current Password</label><input type="password" name="current_password" placeholder="Enter current password" required></div>
@@ -316,7 +295,7 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
       <div class="form-group"><label>Confirm New Password</label><input type="password" name="password_confirmation" placeholder="Confirm new password" required></div>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap">
         <button type="submit" class="btn btn-orange">Update Password</button>
-        <button type="button" class="btn btn-danger" onclick="confirmDelete()">🗑 Delete Account</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete()"><x-icon name="trash" /> Delete Account</button>
       </div>
     </form>
     <div class="divider"></div>
