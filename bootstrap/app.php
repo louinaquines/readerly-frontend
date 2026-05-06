@@ -16,7 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn () => null);
         
         $middleware->alias([
-            'teacher' => \App\Http\Middleware\EnsureTeacher::class,
+            'teacher'  => \App\Http\Middleware\EnsureTeacher::class,
+            'api.auth' => \App\Http\Middleware\RequireApiAuth::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
