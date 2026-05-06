@@ -377,8 +377,8 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
   {{-- LEVEL PROGRESS --}}
   @php
     $sessionsNeeded    = 3;
-    $approved          = $allSessions->where('status','approved')->count();
-    $consecutivePassing = $approved % $sessionsNeeded;
+    $approved = $allSessions->whereIn('status',['approved','completed'])->count();
+$consecutivePassing = min($approved % $sessionsNeeded === 0 && $approved > 0 ? $sessionsNeeded : $approved % $sessionsNeeded, $sessionsNeeded);
     $progressPct       = ($consecutivePassing / $sessionsNeeded) * 100;
   @endphp
   <div class="progress-section">
