@@ -27,4 +27,4 @@ RUN npm install && npm run build
 
 EXPOSE 10000
 
-CMD php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+CMD php artisan config:clear && php artisan cache:clear && php artisan session:flush && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
