@@ -24,4 +24,4 @@ RUN npm install && npm run build
 RUN touch /app/database/database.sqlite
 RUN chmod -R 777 storage bootstrap/cache
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+CMD php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
