@@ -11,9 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+        
+        $middleware->redirectGuestsTo(fn () => null);
+        
         $middleware->alias([
-            'auth.session' => \App\Http\Middleware\AuthenticateSession::class,
-            'api.auth' => \App\Http\Middleware\RequireApiAuth::class,
+            'teacher' => \App\Http\Middleware\EnsureTeacher::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
