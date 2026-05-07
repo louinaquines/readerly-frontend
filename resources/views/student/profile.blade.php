@@ -6,6 +6,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>My Profile — Readerly</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="{{ asset('readerly-logo.png') }}">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}

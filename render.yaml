@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: readerly-frontend-1
+    runtime: image
+    image:
+      url: docker.io/library/php:8.2-cli
+    buildCommand: |
+      apt-get update && apt-get install -y \
+        libpq-dev libcurl4-openssl-dev libzip-dev unzip nodejs npm \
+        && docker-php-ext-install pdo pdo_pgsql curl zip bcmath \
+        && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+        && composer install --no-dev --optimize-autoloader \
+        && npm install && npm run build \
+        && php artisan config:cache \
+        && php artisan route:cache \
+        && php artisan view:cache
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: PORT
+        value: 10000
