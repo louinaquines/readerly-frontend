@@ -308,10 +308,6 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
         <label>Student ID</label>
         <input type="text" value="{{ $user['member_id'] ?? ('stu-' . str_pad($studentData['id'] ?? $user['id'] ?? 1, 4, '0', STR_PAD_LEFT)) }}" readonly>
       </div>
-      <div class="form-group">
-        <label>Grade</label>
-        <input type="text" value="{{ $studentData['grade'] ?? $studentData['grade_level'] ?? '—' }}" readonly>
-      </div>
       <button type="submit" class="btn btn-orange">Update Profile</button>
     </form>
   </div>
