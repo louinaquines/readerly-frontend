@@ -12,7 +12,7 @@
 </head>
 <body>
     <h1>Readerly — Student Report</h1>
-    <p><strong>Pangalan:</strong> {{ $student['name'] }}</p>
+    <p><strong>Name:</strong> {{ $student['name'] }}</p>
     <p><strong>Grade:</strong> {{ $student['grade'] }}</p>
     <p><strong>Reading Level:</strong> {{ $student['reading_level'] }}</p>
     <p><strong>Petsa:</strong> {{ now()->format('F d, Y') }}</p>

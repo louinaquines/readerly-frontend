@@ -262,43 +262,6 @@ body{font-family:var(--font-body);background:linear-gradient(160deg,#FFFBEB 0%,#
     </div>
   </div>
 
-  {{-- SOUND MASTERY --}}
-  <div class="card">
-    <div class="card-title"><div class="ct-icon" style="background:var(--purple-light)"><x-icon name="volume" /></div> Sound Mastery</div>
-    @php
-      $allErrors = [];
-      foreach ($allSess as $session) {
-        $patterns = $session['error_patterns'] ?? [];
-        if (is_string($patterns)) {
-          $decoded = json_decode($patterns, true);
-          $patterns = is_array($decoded) ? $decoded : preg_split('/,\s*/', $patterns, -1, PREG_SPLIT_NO_EMPTY);
-        }
-        if (is_array($patterns)) {
-          foreach ($patterns as $pattern) {
-            if (is_string($pattern) && trim($pattern) !== '') $allErrors[] = strtolower(trim($pattern));
-          }
-        }
-      }
-      $errorCounts = collect($allErrors)->countBy();
-      $sounds = ['Ma/Me/Mi' => 'ma', 'Ng/Mga' => 'ng', 'Ba/Be/Bi' => 'ba', 'Pa/Pe/Pi' => 'pa', 'Sa/Se/Si' => 'sa', 'La/Le/Li' => 'la'];
-    @endphp
-    @if($allSess->count() === 0)
-      <p style="font-size:.83rem;color:var(--gray-400)">Start reading sessions to see your mastery progress.</p>
-    @else
-      @foreach($sounds as $label => $key)
-        @php
-          $errCount = $errorCounts->get($key, 0);
-          $pct = max(0, 100 - ($errCount * 15));
-        @endphp
-        <div class="mastery-item">
-          <div class="mastery-sound">{{ $label }}</div>
-          <div class="mastery-bar-wrap"><div class="mastery-bar" style="width:{{ $pct }}%"></div></div>
-          <div class="mastery-pct">{{ $pct }}%</div>
-        </div>
-      @endforeach
-    @endif
-  </div>
-
   {{-- WEEKLY STREAK --}}
   <div class="card">
     <div class="card-title"><div class="ct-icon" style="background:#FEF3C7"><x-icon name="flame" /></div> Weekly Streak</div>
