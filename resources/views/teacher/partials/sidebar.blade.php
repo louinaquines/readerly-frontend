@@ -26,9 +26,9 @@
 #hamburger {
     display: none;
     position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 101;
+    top: 12px;
+    left: 12px;
+    z-index: 200;
     background: #1E3A5F;
     border: none;
     border-radius: 8px;
@@ -40,6 +40,7 @@
     justify-content: center;
     gap: 5px;
     padding: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 #hamburger span {
@@ -55,6 +56,8 @@
     #hamburger { display: flex; }
     #sidebar { transform: translateX(-100%); }
     #sidebar.open { transform: translateX(0); }
+
+    body { padding-top: 60px; }
 }
 </style>
 
