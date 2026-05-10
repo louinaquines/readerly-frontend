@@ -143,15 +143,20 @@
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     const hamburger = document.getElementById('hamburger');
+    const topbar = document.querySelector('.topbar');
 
     function openSidebar() {
         sidebar.classList.add('open');
         overlay.classList.add('open');
+        hamburger.style.display = 'none';
+        if (topbar) topbar.style.display = 'none';
     }
 
     function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('open');
+        hamburger.style.display = 'flex';
+        if (topbar) topbar.style.display = '';
     }
 
     hamburger.addEventListener('click', function () {
@@ -160,7 +165,6 @@
 
     overlay.addEventListener('click', closeSidebar);
 
-    // Close sidebar on nav link click (mobile UX)
     sidebar.querySelectorAll('a').forEach(function (link) {
         link.addEventListener('click', function () {
             if (window.innerWidth <= 768) closeSidebar();
