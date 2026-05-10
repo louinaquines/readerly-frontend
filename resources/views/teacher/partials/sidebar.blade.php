@@ -56,8 +56,20 @@
     #hamburger { display: flex; }
     #sidebar { transform: translateX(-100%); }
     #sidebar.open { transform: translateX(0); }
-
     body { padding-top: 60px; }
+    .main { margin-left: 0; }
+}
+.main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .main {
+        margin-left: 0;
+    }
 }
 </style>
 
